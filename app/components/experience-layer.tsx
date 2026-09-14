@@ -64,7 +64,7 @@ export function ExperienceLayer() {
         <div className={`chizpa-loader${loaderPhase === "leaving" ? " is-leaving" : ""}`} role="status" aria-live="polite" aria-label="Preparando Chizpa.com">
           <div className="chizpa-loader__spark" aria-hidden="true"><i /><i /><i /></div>
           <div className="chizpa-loader__character">
-            <Image src="/brand/chispita-meditate.webp" alt="" fill priority unoptimized sizes="260px" />
+            <Image src="/brand/chispita-meditate.webp" alt="" width={280} height={280} priority unoptimized />
             <span className="chizpa-loader__gem" aria-hidden="true" />
           </div>
           <p>Un segundo.</p>
