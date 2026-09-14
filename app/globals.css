@@ -4254,5 +4254,37 @@ footer small { font-size:11px; line-height:1.5; }
   pointer-events: none;
 }
 
+.chizpa-home .hero {
+  min-height: 0;
+  padding: 28px clamp(20px, 5vw, 72px) 18px;
+  gap: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.chizpa-home .hero__content { padding: 0; width: 100%; }
+.chizpa-home .hero__lead { margin: 10px 0 0; max-width: 560px; font-size: 16px; line-height: 1.45; }
+.chizpa-home .hero-composer { margin-top: 16px; }
+.chizpa-home .hero-composer textarea { min-height: 84px; }
+.chizpa-home .hero-purchase-path { margin-top: 10px; }
+.chizpa-home .hero-purchase-path ol { display: none; }
+.quick-types { padding: 10px clamp(20px, 5vw, 72px) 6px; }
+.mode-deck { padding: 48px clamp(20px, 5vw, 72px) 56px; }
+.mode-deck__heading { margin-bottom: 22px; }
+.mode-deck__heading h2 { font-size: clamp(32px, 4.5vw, 52px); }
+.mode-card__copy p { display: none; }
+.recurring-showcase { padding: 48px clamp(20px, 5vw, 72px); }
+.catalog { padding: 48px clamp(20px, 5vw, 72px) 64px; }
+.catalog-intro { margin-bottom: 18px; }
+.catalog-intro__side { display: none; }
+.service-card { padding: 16px 16px 14px; }
+.service-card__description { display: none; }
+.how { padding: 48px clamp(20px, 5vw, 72px); gap: 28px; }
+.how__intro { position: static; }
+.product-proof, .video-story, .chispireads-preview, .faq, .final-cta { padding-block: 48px; }
+.faq p { margin-top: 8px; }
+.read-card__copy p, .read-card__link { display: none; }
+
+
 
 

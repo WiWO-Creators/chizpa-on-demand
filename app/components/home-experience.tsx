@@ -65,7 +65,6 @@ function ServiceCard({ service }: { service: ChizpaService }) {
       </div>
       <p className="service-card__category">{service.category}</p>
       <h3>{service.title}</h3>
-      <p className="service-card__description">{service.description}</p>
       <p className="service-card__result"><Check size={16} /> {service.result}</p>
       <div className="service-card__bottom">
         <div><small>{service.recurrence ? "Por ciclo mensual" : pricedFromIds.has(service.id) ? "Desde" : "Precio fijo"}</small><strong>US${service.price}{service.recurrence && <em>/mes</em>}</strong></div>
@@ -176,13 +175,12 @@ export function HomeExperience() {
         <span className="hero-blob hero-blob--two" aria-hidden="true" />
         <div className="hero__content">
           <h1 id="hero-title">Hazlo con <span>Chizpa</span></h1>
-          <p className="hero__lead">Cuéntale el proyecto a Chizpita. Te arma SMARTactics: acciones concretas, cada una una Chizpa lista para pagar.</p>
+          <p className="hero__lead">Cuéntale el proyecto a Chizpita. Te muestra opciones con precio, listas para partir.</p>
         </div>
 
         <HeroComposer />
         <div className="hero-purchase-path" aria-label="Cómo comprar en Chizpa">
-          <ol><li><b>1</b><span><strong>Cuéntalo</strong><small>Una frase basta.</small></span></li><li><b>2</b><span><strong>Elige una SMARTactic</strong><small>Te orientamos paso a paso.</small></span></li><li><b>3</b><span><strong>Paga y parte</strong><small>El click abre el checkout.</small></span></li></ol>
-          <a href="#proyectos">Prefiero elegir una Chizpa <ArrowRight size={15} /></a>
+          <a href="#proyectos">O elige un proyecto <ArrowRight size={15} /></a>
         </div>
       </section>
 
@@ -193,7 +191,7 @@ export function HomeExperience() {
       </section>
 
       <section className="mode-deck" aria-labelledby="mode-title" data-reveal>
-        <div className="mode-deck__heading"><div><p className="section-kicker">Elige tu modo</p><h2 id="mode-title">¿Qué quieres sacar<br />de tu cabeza?</h2></div><p>Haz clic en un modo y Chizpita te lleva directo a los proyectos que mejor calzan.</p></div>
+        <div className="mode-deck__heading"><h2 id="mode-title">¿Qué quieres sacar de tu cabeza?</h2></div>
         <div className="mode-deck__rail">
           {chispitaModes.map((mode) => (
             <button className={`mode-card mode-card--${mode.tone}`} type="button" key={mode.eyebrow} onClick={() => exploreCategory(mode.category)}>
@@ -209,9 +207,9 @@ export function HomeExperience() {
       <section className="recurring-showcase" id="recurrentes" aria-labelledby="recurring-title" data-reveal>
         <div className="recurring-showcase__hero">
           <div className="recurring-showcase__copy">
-            <span className="recurring-showcase__label"><Repeat2 size={18} /> Servicios recurrentes</span>
-            <h2 id="recurring-title">Chizpas que<br /><span>vuelven.</span></h2>
-            <p>Para eso que necesitas una y otra vez. Partes una vez y el próximo ciclo ya tiene contexto, estructura y una forma de trabajar.</p>
+            <span className="recurring-showcase__label"><Repeat2 size={18} /> Cada mes</span>
+            <h2 id="recurring-title">Chizpas que <span>vuelven.</span></h2>
+            <p>Partes una vez. El siguiente ciclo ya tiene contexto.</p>
             <button type="button" onClick={exploreRecurring}>Ver los {recurringCatalogServices.length} recurrentes <ArrowRight size={18} /></button>
           </div>
           <div className="recurring-showcase__art" aria-hidden="true">
@@ -227,9 +225,8 @@ export function HomeExperience() {
       <section className="catalog" id="proyectos" aria-labelledby="catalog-title" data-reveal>
         <div className="catalog-intro">
           <div className="catalog-intro__copy">
-            <p className="section-kicker">{services.length} proyectos listos para encargar</p>
-            <h2 id="catalog-title">Menos vueltas.<span>Más cosas hechas.</span></h2>
-            <p>Elige algo listo o busca por lo que quieres lograr. Ves alcance, precio y plazo antes de empezar.</p>
+            <p className="section-kicker">{services.length} proyectos</p>
+            <h2 id="catalog-title">Elige. Paga. Recibe.</h2>
           </div>
           <div className="catalog-intro__side">
             <div className="catalog-intro__art" aria-hidden="true"><Image src="/brand/chispita-meditate.webp" alt="" fill unoptimized sizes="240px" /></div>
@@ -246,23 +243,23 @@ export function HomeExperience() {
         {isExploringCatalog && remainingServices > 0 && <button className="catalog-more" type="button" onClick={() => setVisibleCount((current) => current + 12)}>Ver 12 más <span>· quedan {remainingServices}</span><ArrowRight size={17} /></button>}
         <div className="custom-project">
           <div className="custom-project__character"><Image src="/brand/chispita-point.webp" alt="" fill unoptimized sizes="190px" /></div>
-          <div><p className="section-kicker">¿Es otra cosa?</p><h3>Si se puede explicar y entregar digitalmente, probablemente se puede chizar.</h3><p>Chizpita lo ordena, confirma si cabe en 72 horas y te propone el camino más simple.</p></div>
+          <div><h3>¿Otra cosa? Si se puede entregar digital, se puede chizar.</h3></div>
           <Link className="button button--orange" href="/start">Cuéntame tu proyecto <ArrowRight size={18} /></Link>
         </div>
       </section>
 
       <section className="how" id="como-comprar" aria-labelledby="how-title" data-reveal>
-        <div className="how__intro"><p className="section-kicker section-kicker--light">Comprar sin complicarte</p><h2 id="how-title">Una idea.<br />Cuatro pasos.<br /><span>Listo.</span></h2><p>Sabes qué recibirás, cuánto cuesta y cuándo llega antes de pagar. Chizpita te acompaña de principio a fin.</p><div className="how__sticker"><Image src="/brand/chispita-line.png" alt="" width={145} height={200} unoptimized /></div></div>
+        <div className="how__intro"><p className="section-kicker section-kicker--light">Cómo comprar</p><h2 id="how-title">Cuatro pasos.</h2></div>
         <ol className="steps">
-          <li><span>01</span><div><small>Antes de pagar · 2 min</small><h3>Cuéntanos qué necesitas</h3><p>Escríbelo a tu manera. Chizpita te arma SMARTactics con Chizpas concretas, listas para pagar.</p><strong>Sales con un brief claro y un proyecto recomendado.</strong></div></li>
-          <li><span>02</span><div><small>Antes de pagar · inmediato</small><h3>Revisa el plan completo</h3><p>Ves el entregable exacto, lo que incluye, el plazo comprometido y el precio. Sin esperar una cotización.</p><strong>Puedes volver y editar cualquier respuesta.</strong></div></li>
-          <li><span>03</span><div><small>Para comenzar · 1 min</small><h3>Paga de forma segura</h3><p>Confirmas el alcance y pagas con Stripe. El reloj de entrega parte con tu brief y materiales completos.</p><strong>Recibes tu código de pedido y acceso al seguimiento.</strong></div></li>
-          <li><span>04</span><div><small>Después de pagar · hasta 72 h</small><h3>Mira cómo toma forma</h3><p>El equipo produce, revisa y afina. Tú ves el estado, recibes los archivos y tienes un ajuste incluido.</p><strong>Terminas con una entrega lista para usar.</strong></div></li>
+          <li><span>01</span><div><h3>Cuéntalo</h3><p>Una frase basta. Chizpita te muestra opciones con precio.</p></div></li>
+          <li><span>02</span><div><h3>Revisa el plan</h3><p>Entregable, plazo y total, antes de pagar.</p></div></li>
+          <li><span>03</span><div><h3>Paga</h3><p>Stripe. El reloj parte con el brief completo.</p></div></li>
+          <li><span>04</span><div><h3>Recibe</h3><p>Hasta 72 h. Un ajuste incluido. Seguimiento del pedido.</p></div></li>
         </ol>
       </section>
 
       <section className="product-proof" aria-labelledby="proof-title" data-reveal>
-        <div className="product-proof__copy"><p className="section-kicker">Tu proyecto tiene pulso</p><h2 id="proof-title">Mira cómo va.<br />Sin perseguir a nadie.</h2><p>Después de pagar ves el avance en tiempo real. Sabes qué está pasando, quién lo está revisando y cuándo llega.</p><ul><li><ShieldCheck size={18} /> Especialista Wiwo incluido</li><li><Clock3 size={18} /> Fecha de entrega visible</li><li><Zap size={18} /> Una ronda de ajustes</li></ul><Link className="button button--ghost" href="/track?demo=CHZ-1042">Ver seguimiento demo <ArrowRight size={17} /></Link></div>
+        <div className="product-proof__copy"><p className="section-kicker">Seguimiento</p><h2 id="proof-title">Mira cómo va.</h2><p>Estado, fecha y archivos. Sin perseguir a nadie.</p><ul><li><ShieldCheck size={18} /> Especialista Wiwo</li><li><Clock3 size={18} /> Entrega visible</li><li><Zap size={18} /> 1 ajuste</li></ul><Link className="button button--ghost" href="/track?demo=CHZ-1042">Ver demo <ArrowRight size={17} /></Link></div>
         <div className="product-proof__stage">
           <div className="project-dashboard">
             <div className="project-dashboard__top"><div><span>Pedido CHZ-1042</span><strong>PPT de directorio</strong></div><span className="project-dashboard__status"><i /> En producción</span></div>
@@ -276,9 +273,8 @@ export function HomeExperience() {
 
       <section className="video-story" aria-labelledby="video-story-title" data-reveal>
         <div className="video-story__copy">
-          <p className="section-kicker">Chizpa en movimiento</p>
-          <h2 id="video-story-title">Una idea.<br /><span>Y que empiece a pasar.</span></h2>
-          <p>Mira la energía detrás de Chizpa: proyectos que salen de tu cabeza, toman forma y quedan listos para usar.</p>
+          <p className="section-kicker">Chizpa</p>
+          <h2 id="video-story-title">Que empiece a pasar.</h2>
           <a href="https://youtu.be/MKbwut4Kw_I" target="_blank" rel="noreferrer">Ver en YouTube <ArrowRight size={17} /></a>
         </div>
         <div className="video-story__frame">
@@ -289,20 +285,20 @@ export function HomeExperience() {
 
       <section className="chispireads-preview" aria-labelledby="reads-preview-title" data-reveal>
         <div className="chispireads-preview__heading">
-          <div><p className="section-kicker"><BookOpen size={16} /> ChispiReads</p><h2 id="reads-preview-title">Ideas útiles para<br /><span>hacerlo mejor.</span></h2></div>
-          <div><p>Guías simples, checklists y pasos concretos para presentaciones, videos, documentos y proyectos digitales.</p><Link href="/chispireads">Leer todas las guías <ArrowRight size={17} /></Link></div>
+          <div><p className="section-kicker"><BookOpen size={16} /> ChispiReads</p><h2 id="reads-preview-title">Guías cortas.</h2></div>
+          <div><Link href="/chispireads">Ver todas <ArrowRight size={17} /></Link></div>
         </div>
         <div className="chispireads-preview__grid">
           {featuredReads.map((article) => <article className="read-card" key={article.slug}>
             <Link className="read-card__art" href={`/chispireads/${article.slug}`} aria-label={`Leer ${article.title}`}><Image src={article.art} alt="" fill unoptimized sizes="(max-width: 780px) 100vw, 33vw" /></Link>
-            <div className="read-card__copy"><span>{article.category} · {article.readTime}</span><h3><Link href={`/chispireads/${article.slug}`}>{article.title}</Link></h3><p>{article.dek}</p><Link className="read-card__link" href={`/chispireads/${article.slug}`}>Leer paso a paso <ArrowRight size={16} /></Link></div>
+            <div className="read-card__copy"><span>{article.category} · {article.readTime}</span><h3><Link href={`/chispireads/${article.slug}`}>{article.title}</Link></h3></div>
           </article>)}
         </div>
       </section>
 
       <div className="energy-ribbon" aria-hidden="true"><div><span>TÚ LO CUENTAS</span><i /> <span>CHIZPITA LO ORDENA</span><i /> <span>EL EQUIPO LO HACE</span><i /> <span>TÚ LO CUENTAS</span><i /> <span>CHIZPITA LO ORDENA</span><i /> <span>EL EQUIPO LO HACE</span></div></div>
 
-      <section className="faq" id="preguntas" aria-labelledby="faq-title" data-reveal><div><p className="section-kicker">Sin letra chica rara</p><h2 id="faq-title">Preguntas que sí importan.</h2><p>Si tu duda no está acá, Chizpita la resuelve durante el brief.</p></div><div className="faq__list"><details><summary>¿Las 72 horas corren desde que pago?</summary><p>Corren desde que el pago está confirmado y el brief tiene todo lo necesario. Antes de pagar verás el plazo comprometido.</p></details><details><summary>¿Quién hace mi proyecto?</summary><p>Chizpita te guía y organiza el brief. Después, una persona del equipo crea, revisa y aprueba cada entrega.</p></details><details><summary>¿Qué pasa si mi proyecto es demasiado grande?</summary><p>Chizpita te lo dirá antes de pagar. Puede dividirlo en etapas, sugerir otra Chizpa o derivarlo a Wiwo.</p></details><details><summary>¿Puedo pedir cambios?</summary><p>Sí. Una ronda consolidada está incluida. Cambiar el objetivo o sumar entregables puede requerir una Chizpa adicional.</p></details></div></section>
+      <section className="faq" id="preguntas" aria-labelledby="faq-title" data-reveal><div><h2 id="faq-title">Preguntas.</h2></div><div className="faq__list"><details><summary>¿Las 72 horas corren desde que pago?</summary><p>Desde pago confirmado y brief completo.</p></details><details><summary>¿Quién lo hace?</summary><p>Chizpita ordena. Una persona de Wiwo crea, revisa y aprueba.</p></details><details><summary>¿Puedo pedir cambios?</summary><p>Sí. Una ronda está incluida.</p></details></div></section>
 
       <section className="final-cta" data-reveal><div className="final-cta__copy"><p>Una cosa menos en tu cabeza.</p><h2>Deja de postergarlo.<br /><span>Hazlo con Chizpa.</span></h2><Link className="button button--orange" href="/start">Ready to Chiz? <ArrowRight size={19} /></Link></div><div className="final-cta__visual"><span className="final-cta__gem" aria-hidden="true" /><Image src="/brand/chispita-walk.webp" alt="Chizpita listo para poner en marcha tu proyecto" fill unoptimized sizes="(max-width: 800px) 90vw, 40vw" /></div></section>
 

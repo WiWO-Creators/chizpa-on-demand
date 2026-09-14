@@ -82,7 +82,7 @@ export function HeroComposer() {
       ? "Elige una Chizpa. El click te lleva a pagar."
       : awake
         ? "Perfecto. Ya puedo armarte SMARTactics."
-        : "Cuéntamelo como te salga. Yo lo convierto en Chizpas para pagar.";
+        : "Cuéntamelo. Te muestro opciones con precio.";
 
   return (
     <form
@@ -105,8 +105,7 @@ export function HeroComposer() {
       </div>
 
       <label className="hero-composer__prompt" htmlFor="project-idea">
-        <strong>¿Qué proyecto quieres dejar listo?</strong>
-        <span>SMARTactics con Chizpas concretas. Nada de consejos sueltos.</span>
+        <strong>¿Qué necesitas dejar listo?</strong>
       </label>
 
       <div className="hero-composer__input-shell">
@@ -121,8 +120,8 @@ export function HeroComposer() {
               setError("");
             }
           }}
-          placeholder="Ej. Tengo un informe de 30 páginas y necesito convertirlo en una presentación de directorio clara, visual y de máximo 10 slides…"
-          rows={5}
+          placeholder="Ej. Presentación de directorio de 10 slides para el viernes…"
+          rows={3}
           minLength={12}
           maxLength={800}
           required
