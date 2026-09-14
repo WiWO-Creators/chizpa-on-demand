@@ -12,11 +12,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://chizpa.com"),
   title: "Chizpa.com — Haz que pase en menos de 72 horas",
-  description: "Cuéntale tu proyecto a Chispita. Especialistas Wiwo lo convierten en una entrega profesional en menos de 72 horas.",
+  description: "Cuéntale tu proyecto a Chizpita. Especialistas Wiwo lo convierten en una entrega profesional en menos de 72 horas.",
   keywords: ["proyectos on-demand", "ejecución de proyectos", "Wiwo", "presentaciones", "videos", "automatizaciones"],
   openGraph: {
     title: "¿Tienes un proyecto? Chízalo.",
-    description: "Tú lo cuentas. Chispita lo ordena. El equipo lo hace en menos de 72 horas.",
+    description: "Tú lo cuentas. Chizpita lo ordena. El equipo lo hace en menos de 72 horas.",
     images: ["/brand/chizpa-logo-flat.png"],
     siteName: "Chizpa.com",
     locale: "es_CL",

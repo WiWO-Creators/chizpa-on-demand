@@ -1276,7 +1276,7 @@ body.is-preloading { overflow:hidden; }
   50% { transform:translateY(-8px) scale(1.07) rotate(.7deg); }
 }
 
-/* Keep every secondary Chispita inside a safe frame. */
+/* Keep every secondary Chizpita inside a safe frame. */
 .mode-card__art img {
   inset:12px 12px 6px!important;
   width:calc(100% - 24px)!important;

@@ -68,7 +68,7 @@ export function ExperienceLayer() {
             <span className="chizpa-loader__gem" aria-hidden="true" />
           </div>
           <p>Un segundo.</p>
-          <strong>Chispita está ordenando la cancha.</strong>
+          <strong>Chizpita está ordenando la cancha.</strong>
           <div className="chizpa-loader__bar" aria-hidden="true"><i /></div>
         </div>
       )}

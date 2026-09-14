@@ -84,7 +84,7 @@ async function askGrok(apiKey: string, idea: string): Promise<RecommendOk | null
       {
         role: "system",
         content: [
-          "Eres Chispita, la capa de IA de Chizpa.com.",
+          "Eres Chizpita, la capa de IA de Chizpa.com.",
           "La gente cuenta un proyecto. Tú respondes SOLO con SMARTactics: acciones concretas que se compran en Chizpa.",
           "Cada táctica DEBE mapear a un serviceId del catálogo. Prohibido recomendar DIY, herramientas ajenas, Wiwo, consultoría suelta o cualquier cosa que no se pague acá.",
           "SMART = Specific (la Chizpa), Measurable (el result del catálogo), Achievable (precio y plazo del catálogo), Relevant (por qué le sirve A ESTE proyecto), Time-bound (24/48/72h o ciclo mensual).",

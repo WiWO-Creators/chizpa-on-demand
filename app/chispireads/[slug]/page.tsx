@@ -123,7 +123,7 @@ export default async function ChispiReadArticlePage({ params }: ArticlePageProps
       <aside className="article-toc"><Link href="/chispireads"><ArrowLeft size={15} /> Todas las guías</Link><strong>En esta guía</strong><ol>{article.sections.map((section, index) => <li key={section.heading}><a href={`#paso-${index + 1}`}>{section.heading.replace(/^\d+\.\s*/, "")}</a></li>)}</ol><Link className="article-toc__cta" href={`/start?service=${service.id}`}>Prefiero chizarlo <ArrowRight size={15} /></Link></aside>
 
       <article className="article-body">
-        <section className="article-short-answer" aria-labelledby="short-answer-title"><span><Sparkles size={20} /></span><div><p>Chispita en corto</p><h2 id="short-answer-title">Lo importante antes de empezar</h2>{article.intro.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div></section>
+        <section className="article-short-answer" aria-labelledby="short-answer-title"><span><Sparkles size={20} /></span><div><p>Chizpita en corto</p><h2 id="short-answer-title">Lo importante antes de empezar</h2>{article.intro.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div></section>
 
         <section className="article-takeaways" aria-label="Qué vas a conseguir"><h2>Cuando termines tendrás</h2><ul>{article.takeaways.map((takeaway) => <li key={takeaway}><Check size={17} /> {takeaway}</li>)}</ul></section>
 
@@ -131,7 +131,7 @@ export default async function ChispiReadArticlePage({ params }: ArticlePageProps
 
         <section className="article-checklist"><div><p className="section-kicker">Checklist final</p><h2>Antes de darlo por listo</h2></div><ul>{article.takeaways.concat(["El objetivo se entiende sin contexto extra", "La entrega está pensada para su audiencia", "El siguiente paso está claro"]).map((item) => <li key={item}><span><Check size={15} /></span>{item}</li>)}</ul></section>
 
-        <section className="article-service-cta"><div><p className="section-kicker">¿Ya tienes los materiales?</p><h2>Hazlo tú.<br />O hazlo con Chizpa.</h2><p>{service.description} Recibe {service.result.toLocaleLowerCase("es")} en hasta {service.hours} horas.</p><Link className="button button--orange" href={`/start?service=${service.id}`}>Chizar {service.shortTitle} · US${service.price} <ArrowRight size={18} /></Link></div><div><Image src="/brand/chispita-point.webp" alt="Chispita señalando el siguiente paso" fill unoptimized sizes="300px" /></div></section>
+        <section className="article-service-cta"><div><p className="section-kicker">¿Ya tienes los materiales?</p><h2>Hazlo tú.<br />O hazlo con Chizpa.</h2><p>{service.description} Recibe {service.result.toLocaleLowerCase("es")} en hasta {service.hours} horas.</p><Link className="button button--orange" href={`/start?service=${service.id}`}>Chizar {service.shortTitle} · US${service.price} <ArrowRight size={18} /></Link></div><div><Image src="/brand/chispita-point.webp" alt="Chizpita señalando el siguiente paso" fill unoptimized sizes="300px" /></div></section>
 
         <section className="article-faq" aria-labelledby="article-faq-title"><p className="section-kicker">Preguntas frecuentes</p><h2 id="article-faq-title">Lo que normalmente preguntan.</h2>{article.faq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}</section>
       </article>

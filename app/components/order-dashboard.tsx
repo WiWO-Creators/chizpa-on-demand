@@ -22,7 +22,7 @@ const demoOrder: LiveOrder = {
 
 const timeline = [
   ["Recibido", "Brief, pago y materiales confirmados."],
-  ["Primera versión", "Chispita ordenó el proyecto y ya estamos construyendo."],
+  ["Primera versión", "Chizpita ordenó el proyecto y ya estamos construyendo."],
   ["Revisión del equipo", "Una persona está afinando contenido, forma y detalle."],
   ["En producción", "Estamos cerrando los archivos listos para usar."],
   ["Entregado", "Una cosa menos en tu lista."],
@@ -165,11 +165,11 @@ export function OrderDashboard({ query }: { query: string }) {
         <p className="section-kicker">{paid ? "Tu proyecto está encendido" : "Falta confirmar el pago"}</p>
         <h1>{paid ? "El equipo está chizeando." : "Tu pedido está a medio camino."}</h1>
         <p>{paid
-          ? <>Primera entrega antes del <strong>{formatDue(selected.due_at)}</strong>. Si necesitamos algo, Chispita te avisa.</>
+          ? <>Primera entrega antes del <strong>{formatDue(selected.due_at)}</strong>. Si necesitamos algo, Chizpita te avisa.</>
           : <>Encontramos el pedido <strong>{selected.human_code}</strong>. Cuando Stripe confirme el pago, el equipo lo toma.</>}</p>
       </div>
       <div className="tracking-hero__aside">
-        <div className="tracking-hero__chispita"><Image src="/brand/chispita-walk.webp" alt="Chispita avanzando con tu proyecto" fill unoptimized sizes="190px" /></div>
+        <div className="tracking-hero__chispita"><Image src="/brand/chispita-walk.webp" alt="Chizpita avanzando con tu proyecto" fill unoptimized sizes="190px" /></div>
         <div className="tracking-countdown"><Clock3 size={24} /><strong>{paid ? formatRemaining(selected.due_at, now) : "—"}</strong><span>{paid ? "para la entrega estimada" : "esperando pago"}</span></div>
       </div>
     </section>

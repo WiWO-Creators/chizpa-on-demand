@@ -63,7 +63,7 @@ export function HeroComposer() {
       });
     } catch {
       setPlan(null);
-      setError("Chispita se trabó un segundo. Inténtalo de nuevo.");
+      setError("Chizpita se trabó un segundo. Inténtalo de nuevo.");
       setStatus("error");
     }
   }
@@ -95,7 +95,7 @@ export function HeroComposer() {
             <Image src={status === "loading" ? "/brand/chispita-laptop.webp" : "/brand/chispita-point.webp"} alt="" width={118} height={118} unoptimized priority />
           </span>
           <span className="hero-composer__agent-copy">
-            <strong>Chispita</strong>
+            <strong>Chizpita</strong>
             <small>{agentCopy}</small>
           </span>
         </div>
@@ -157,7 +157,7 @@ export function HeroComposer() {
 
       {status === "loading" && (
         <div className="smartactics smartactics--loading" aria-live="polite">
-          <p className="smartactics__kicker"><Sparkles size={15} /> Capa de IA Chispita</p>
+          <p className="smartactics__kicker"><Sparkles size={15} /> Capa de IA Chizpita</p>
           <div className="smartactics__skeletons">
             <span /><span /><span />
           </div>

@@ -75,8 +75,8 @@ export default function ChispiReadsPage() {
     </section>
 
     <section className="reads-do-it">
-      <div><p className="section-kicker">Dos caminos, cero drama</p><h2>Aprende a hacerlo.<br /><span>O hazlo con Chizpa.</span></h2><p>Si ya tienes una idea, materiales o incluso un borrador desordenado, Chispita arma el plan y te dice cuánto cuesta antes de pagar.</p><Link className="button button--orange" href="/start">Armar mi plan <ArrowRight size={18} /></Link></div>
-      <div className="reads-do-it__art"><Image src="/brand/chispita-point.webp" alt="Chispita listo para ayudarte a comenzar" fill unoptimized sizes="360px" /></div>
+      <div><p className="section-kicker">Dos caminos, cero drama</p><h2>Aprende a hacerlo.<br /><span>O hazlo con Chizpa.</span></h2><p>Si ya tienes una idea, materiales o incluso un borrador desordenado, Chizpita arma el plan y te dice cuánto cuesta antes de pagar.</p><Link className="button button--orange" href="/start">Armar mi plan <ArrowRight size={18} /></Link></div>
+      <div className="reads-do-it__art"><Image src="/brand/chispita-point.webp" alt="Chizpita listo para ayudarte a comenzar" fill unoptimized sizes="360px" /></div>
     </section>
 
     <footer><Wordmark /><p>Hecho en América con amor por <strong>Wiwo</strong>.</p><div><Link href="/#proyectos">Proyectos</Link><Link href="/chispireads">ChispiReads</Link><Link href="/track">Mi pedido</Link></div><small>© 2026 Chizpa.com · Guías útiles. Proyectos reales.</small></footer>

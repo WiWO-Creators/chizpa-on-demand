@@ -86,12 +86,12 @@ function productCopy(service: { id: string; title: string; category: ServiceCate
 }
 
 const formatChoices: Record<ServiceCategory | "default", string[]> = {
-  Presentaciones: ["PPTX editable", "Google Slides", "PPTX + PDF", "Que Chispita recomiende"],
-  Videos: ["Video vertical", "Video horizontal", "Ambos formatos", "Que Chispita recomiende"],
-  Documentos: ["DOCX editable", "PDF", "DOCX + PDF", "Que Chispita recomiende"],
-  Diseño: ["PNG / JPG", "PDF para imprimir", "Archivo editable", "Que Chispita recomiende"],
-  Herramientas: ["Link web", "Flujo conectado", "Link + guía de uso", "Que Chispita recomiende"],
-  default: ["Editable", "PDF", "Link web", "Que Chispita recomiende"],
+  Presentaciones: ["PPTX editable", "Google Slides", "PPTX + PDF", "Que Chizpita recomiende"],
+  Videos: ["Video vertical", "Video horizontal", "Ambos formatos", "Que Chizpita recomiende"],
+  Documentos: ["DOCX editable", "PDF", "DOCX + PDF", "Que Chizpita recomiende"],
+  Diseño: ["PNG / JPG", "PDF para imprimir", "Archivo editable", "Que Chizpita recomiende"],
+  Herramientas: ["Link web", "Flujo conectado", "Link + guía de uso", "Que Chizpita recomiende"],
+  default: ["Editable", "PDF", "Link web", "Que Chizpita recomiende"],
 };
 
 export function ProjectWizard({ initialServiceId, initialIdea }: { initialServiceId: string | null; initialIdea: string }) {
@@ -221,12 +221,12 @@ export function ProjectWizard({ initialServiceId, initialIdea }: { initialServic
       <div className="wizard-layout">
         <aside className="chispita-panel">
           <div className="chispita-guide">
-            <div className="chispita-avatar" role="img" aria-label="Chispita, tu guía para crear el brief"><Image key={wizardCharacter} src={wizardCharacter} alt="" fill unoptimized sizes="96px" /></div>
+            <div className="chispita-avatar" role="img" aria-label="Chizpita, tu guía para crear el brief"><Image key={wizardCharacter} src={wizardCharacter} alt="" fill unoptimized sizes="96px" /></div>
             <div className="chispita-bubble">
-              <p className="section-kicker">Chispita</p>
+              <p className="section-kicker">Chizpita</p>
               {step === 0 && <><h2>{copy.heading}</h2><p>{copy.lead}</p></>}
               {step === 1 && <><h2>Trae lo que tengas. O un link.</h2><p>{copy.materialsLead}</p></>}
-              {step === 2 && <><h2>Ahora dime cómo debe quedar.</h2><p>Tono, formato y plazo. Chispita ordena el resto.</p></>}
+              {step === 2 && <><h2>Ahora dime cómo debe quedar.</h2><p>Tono, formato y plazo. Chizpita ordena el resto.</p></>}
               {step === 3 && <><h2>Esto es exactamente lo que compras.</h2><p>Revisa alcance, precio y fecha. Después del pago, el equipo parte.</p></>}
             </div>
           </div>
@@ -268,7 +268,7 @@ export function ProjectWizard({ initialServiceId, initialIdea }: { initialServic
           </div>}
 
           {step === 2 && <div className="wizard-step">
-            <p className="wizard-step__count">Paso 3 de 4 · Resultado</p><h1 ref={stepHeadingRef} tabIndex={-1}>¿Cómo debe quedar?</h1><p className="wizard-step__lead">Elige hasta dos tonos. Si no sabes el formato, Chispita recomienda uno.</p>
+            <p className="wizard-step__count">Paso 3 de 4 · Resultado</p><h1 ref={stepHeadingRef} tabIndex={-1}>¿Cómo debe quedar?</h1><p className="wizard-step__lead">Elige hasta dos tonos. Si no sabes el formato, Chizpita recomienda uno.</p>
             <div className="field-group"><span>Tono · máximo 2</span><div className="choice-grid choice-grid--tones">{tones.map((tone) => { const selected = brief.tone.includes(tone); return <button type="button" key={tone} aria-pressed={selected} className={selected ? "is-selected" : ""} disabled={brief.tone.length >= 2 && !selected} onClick={() => toggleTone(tone)}>{tone}{selected && <CheckCircle2 size={17} />}</button>; })}</div></div>
             <div className="field-group field-group--spaced"><span>Formato principal</span><div className="choice-grid choice-grid--compact">{formats.map((format) => <button type="button" key={format} aria-pressed={brief.format === format} className={brief.format === format ? "is-selected" : ""} onClick={() => setField("format", format)}>{format}</button>)}</div></div>
             <div className="two-fields">
