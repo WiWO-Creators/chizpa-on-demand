@@ -7,13 +7,14 @@ import {
   Play, Presentation, Search, ShieldCheck, Sparkles, Video,
   Repeat2, Workflow, X, Zap,
 } from "lucide-react";
-import { FormEvent, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   categories, getServiceIntents, services,
   type ChizpaService, type ServiceIntent,
 } from "../data/services";
 import { chispireads } from "../data/chispireads";
 import { MarketingHeader, Wordmark } from "./marketing-header";
+import { HeroComposer } from "./hero-composer";
 
 const iconByName = { presentation: Presentation, video: Video, document: FileText, palette: Palette, workflow: Workflow };
 const artByCategory: Record<ChizpaService["category"], string> = {
@@ -36,7 +37,6 @@ const recurringFeaturedIds = [
   "resultados-del-mes", "videos-del-mes", "tu-mes-en-video", "social-media-automatico",
 ];
 const recurringCatalogServices = services.filter((service) => Boolean(service.recurrence));
-const heroExamples = ["PPT de directorio", "Editar una tesis", "Video de matrimonio", "Automatizar una tarea"];
 const quickTypes: ServiceIntent[] = ["Trabajo", "Estudio", "Personal", "Tech"];
 const featuredReads = chispireads.slice(0, 3);
 const chispitaModes = [
@@ -98,7 +98,6 @@ export function HomeExperience() {
   const [category, setCategory] = useState<(typeof categories)[number]>("Todo");
   const [intent, setIntent] = useState<"Todo" | ServiceIntent>("Todo");
   const [query, setQuery] = useState("");
-  const [idea, setIdea] = useState("");
   const [showAll, setShowAll] = useState(false);
   const [visibleCount, setVisibleCount] = useState(12);
   const [recurringOnly, setRecurringOnly] = useState(false);
@@ -133,11 +132,6 @@ export function HomeExperience() {
 
   const isExploringCatalog = showAll || category !== "Todo" || intent !== "Todo" || recurringOnly || Boolean(query.trim());
   const remainingServices = Math.max(0, filteredServices.length - visibleServices.length);
-
-  function submitIdea(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (idea.trim()) window.location.href = `/start?idea=${encodeURIComponent(idea.trim())}`;
-  }
 
   function revealCatalog() {
     setRecurringOnly(false);
@@ -182,28 +176,12 @@ export function HomeExperience() {
         <span className="hero-blob hero-blob--two" aria-hidden="true" />
         <div className="hero__content">
           <h1 id="hero-title">Hazlo con <span>Chizpa</span></h1>
-          <p className="hero__lead">Todo proyecto parte contándolo. Chispita lo entiende, lo ordena y te muestra cómo hacerlo realidad.</p>
+          <p className="hero__lead">Cuéntale el proyecto a Chispita. Te arma SMARTactics: acciones concretas, cada una una Chizpa lista para pagar.</p>
         </div>
 
-        <form className={`hero-composer${idea.trim().length >= 12 ? " is-awake" : ""}`} onSubmit={submitIdea}>
-          <div className="hero-composer__header">
-            <div className="hero-composer__agent">
-              <span className="hero-composer__avatar" aria-hidden="true">
-                <Image src="/brand/chispita-point.webp" alt="" width={118} height={118} unoptimized priority />
-              </span>
-              <span className="hero-composer__agent-copy"><strong>Chispita</strong><small>{idea.trim().length >= 12 ? "Perfecto. Ya estoy armando tu proyecto." : "Cuéntamelo como te salga. Yo lo ordeno."}</small></span>
-            </div>
-            <div className="hero-composer__status" id="composer-status" aria-live="polite"><i /> {idea.trim().length >= 12 ? "Idea detectada" : "Escuchando"}</div>
-          </div>
-          <label className="hero-composer__prompt" htmlFor="project-idea"><strong>¿Qué quieres crear, resolver o terminar?</strong><span>Trabajo, estudio, una idea personal o algo completamente nuevo.</span></label>
-          <div className="hero-composer__input-shell">
-            <textarea id="project-idea" aria-describedby="composer-status" value={idea} onChange={(event) => setIdea(event.target.value)} placeholder="Ej. Tengo un informe de 30 páginas y necesito convertirlo en una presentación de directorio clara, visual y de máximo 10 slides…" rows={5} minLength={12} required />
-            <div className="hero-composer__toolbar"><span><Sparkles size={14} /> Alcance, precio y plazo antes de pagar</span><button type="submit">Armar mi plan <ArrowRight size={19} /></button></div>
-          </div>
-          <div className="hero-examples" aria-label="Ejemplos de proyectos"><span>Prueba con:</span>{heroExamples.map((example) => <button type="button" key={example} onClick={() => setIdea(example)}>{example}</button>)}</div>
-        </form>
+        <HeroComposer />
         <div className="hero-purchase-path" aria-label="Cómo comprar en Chizpa">
-          <ol><li><b>1</b><span><strong>Cuéntalo</strong><small>Una frase basta.</small></span></li><li><b>2</b><span><strong>Revisa el plan</strong><small>Alcance, precio y plazo.</small></span></li><li><b>3</b><span><strong>Paga y parte</strong><small>Seguimiento incluido.</small></span></li></ol>
+          <ol><li><b>1</b><span><strong>Cuéntalo</strong><small>Una frase basta.</small></span></li><li><b>2</b><span><strong>Elige una SMARTactic</strong><small>Te orientamos paso a paso.</small></span></li><li><b>3</b><span><strong>Paga y parte</strong><small>El click abre el checkout.</small></span></li></ol>
           <a href="#proyectos">Prefiero elegir una Chizpa <ArrowRight size={15} /></a>
         </div>
       </section>
@@ -276,7 +254,7 @@ export function HomeExperience() {
       <section className="how" id="como-comprar" aria-labelledby="how-title" data-reveal>
         <div className="how__intro"><p className="section-kicker section-kicker--light">Comprar sin complicarte</p><h2 id="how-title">Una idea.<br />Cuatro pasos.<br /><span>Listo.</span></h2><p>Sabes qué recibirás, cuánto cuesta y cuándo llega antes de pagar. Chispita te acompaña de principio a fin.</p><div className="how__sticker"><Image src="/brand/chispita-line.png" alt="" width={145} height={200} unoptimized /></div></div>
         <ol className="steps">
-          <li><span>01</span><div><small>Antes de pagar · 2 min</small><h3>Cuéntanos qué necesitas</h3><p>Escríbelo a tu manera, responde tres preguntas simples y arrastra los materiales que ya tienes.</p><strong>Sales con un brief claro y un proyecto recomendado.</strong></div></li>
+          <li><span>01</span><div><small>Antes de pagar · 2 min</small><h3>Cuéntanos qué necesitas</h3><p>Escríbelo a tu manera. Chispita te arma SMARTactics con Chizpas concretas, listas para pagar.</p><strong>Sales con un brief claro y un proyecto recomendado.</strong></div></li>
           <li><span>02</span><div><small>Antes de pagar · inmediato</small><h3>Revisa el plan completo</h3><p>Ves el entregable exacto, lo que incluye, el plazo comprometido y el precio. Sin esperar una cotización.</p><strong>Puedes volver y editar cualquier respuesta.</strong></div></li>
           <li><span>03</span><div><small>Para comenzar · 1 min</small><h3>Paga de forma segura</h3><p>Confirmas el alcance y pagas con Stripe. El reloj de entrega parte con tu brief y materiales completos.</p><strong>Recibes tu código de pedido y acceso al seguimiento.</strong></div></li>
           <li><span>04</span><div><small>Después de pagar · hasta 72 h</small><h3>Mira cómo toma forma</h3><p>El equipo produce, revisa y afina. Tú ves el estado, recibes los archivos y tienes un ajuste incluido.</p><strong>Terminas con una entrega lista para usar.</strong></div></li>

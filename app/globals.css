@@ -3527,3 +3527,318 @@ footer small { font-size:11px; line-height:1.5; }
   .wizard-nav__forward { min-width:0; }
   .wizard-nav__forward > p { max-width:230px; font-size:10px; }
 }
+
+/* SMARTactics — AI layer inside the main composer */
+.hero-composer.is-smart,
+.hero-composer.is-thinking {
+  overflow: visible;
+}
+.hero-composer.is-thinking > .hero-composer__header .hero-composer__status,
+.hero-composer.is-smart > .hero-composer__header .hero-composer__status {
+  color: var(--purple-deep);
+  border-color: rgba(255, 122, 0, .28);
+  background: #fff1de;
+}
+.hero-composer.is-thinking > .hero-composer__header .hero-composer__status i,
+.hero-composer.is-smart > .hero-composer__header .hero-composer__status i {
+  background: var(--orange);
+  box-shadow: 0 0 0 5px rgba(255, 122, 0, .16);
+}
+.hero-composer.is-smart textarea {
+  min-height: 148px;
+  padding-bottom: 84px;
+}
+.hero-composer__toolbar button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+.hero-composer .spin {
+  animation: smart-spin .8s linear infinite;
+}
+
+.smartactics {
+  position: relative;
+  z-index: 2;
+  margin: 4px 18px 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border: 1px solid rgba(90, 22, 200, .12);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 92% 0%, rgba(201, 255, 88, .22), transparent 34%),
+    linear-gradient(180deg, #fbf8ff 0%, #fffdfa 100%);
+  box-shadow: 0 16px 36px rgba(36, 16, 55, .06);
+}
+.smartactics__kicker {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--purple);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.smartactics__intro h2 {
+  max-width: 34ch;
+  margin: 8px 0 0;
+  color: var(--purple-deep);
+  font-size: clamp(26px, 2.6vw, 36px);
+  font-weight: 750;
+  line-height: 1.08;
+  letter-spacing: -.04em;
+  text-wrap: balance;
+}
+.smartactics__intro p {
+  max-width: 62ch;
+  margin: 8px 0 0;
+  color: #655b6d;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.smartactics__list {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+}
+.smartactic {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid rgba(36, 16, 55, .1);
+  border-radius: 18px;
+  background: white;
+  box-shadow: 0 10px 24px rgba(36, 16, 55, .05);
+  animation: smart-enter 420ms var(--ease-chizpa) both;
+}
+.smartactic:nth-child(2) { animation-delay: 90ms; }
+.smartactic:nth-child(3) { animation-delay: 180ms; }
+.smartactic--primary {
+  border-color: rgba(255, 122, 0, .38);
+  background: linear-gradient(180deg, #fff7ee 0%, #fffdfa 48%);
+  box-shadow: 0 14px 30px rgba(255, 122, 0, .12);
+}
+.smartactic__top {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.smartactic__top > b {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: white;
+  background: var(--purple);
+  font-family: "Fredoka", sans-serif;
+  font-size: 15px;
+}
+.smartactic--primary .smartactic__top > b {
+  color: var(--purple-deep);
+  background: var(--orange);
+}
+.smartactic__category {
+  margin: 0 0 4px;
+  color: var(--purple);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.smartactic h3 {
+  margin: 0;
+  color: var(--purple-deep);
+  font-size: 20px;
+  line-height: 1.15;
+  letter-spacing: -.03em;
+}
+.smartactic__why {
+  margin: 6px 0 0;
+  color: #655b6d;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.smartactic__smart {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  list-style: none;
+}
+.smartactic__smart li {
+  min-width: 0;
+  padding: 8px 8px 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-radius: 11px;
+  background: #f6f1fb;
+}
+.smartactic--primary .smartactic__smart li { background: #fff1de; }
+.smartactic__smart strong {
+  color: var(--purple);
+  font-family: "Fredoka", sans-serif;
+  font-size: 13px;
+  line-height: 1;
+}
+.smartactic__smart span {
+  overflow: hidden;
+  color: #5d5366;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.smartactic__service {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 4px;
+}
+.smartactic__service > div {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 12px;
+}
+.smartactic__service small {
+  width: 100%;
+  color: #756a7d;
+  font-size: 11px;
+  font-weight: 750;
+}
+.smartactic__service strong {
+  color: var(--purple-deep);
+  font-size: 22px;
+  letter-spacing: -.03em;
+}
+.smartactic__service strong em {
+  margin-left: 3px;
+  color: #8a7f91;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+}
+.smartactic__service span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #6f6478;
+  font-size: 12px;
+  font-weight: 700;
+}
+.hero-composer .smartactic__service a {
+  min-height: 46px;
+  padding: 0 16px 0 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  color: white;
+  background: var(--purple);
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 10px 20px rgba(90, 22, 200, .18);
+}
+.smartactic--primary .smartactic__service {
+  padding: 12px 12px 12px 14px;
+  border-radius: 14px;
+  background: #fff4e5;
+}
+.hero-composer .smartactic--primary .smartactic__service a {
+  min-height: 50px;
+  padding-inline: 18px 16px;
+  color: var(--purple-deep);
+  background: var(--orange);
+  box-shadow: 0 10px 20px rgba(255, 122, 0, .22);
+}
+.smartactics__note {
+  margin: 0;
+  color: #7a6f80;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.smartactics--loading {
+  min-height: 160px;
+}
+.smartactics__skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.smartactics__skeletons span {
+  height: 74px;
+  border-radius: 16px;
+  background: linear-gradient(90deg, #efe8f6 0%, #f7f2fb 45%, #efe8f6 100%);
+  background-size: 180% 100%;
+  animation: smart-shimmer 1.2s ease-in-out infinite;
+}
+.smartactics--error {
+  gap: 10px;
+}
+.smartactics--error p {
+  margin: 0;
+  color: var(--purple-deep);
+  font-size: 14px;
+  font-weight: 700;
+}
+.hero-composer .smartactics--error a {
+  min-height: 42px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: max-content;
+  border-radius: 11px;
+  color: white;
+  background: var(--purple);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+@keyframes smart-enter {
+  from { opacity: 0; transform: translateY(10px); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes smart-spin { to { transform: rotate(360deg); } }
+@keyframes smart-shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 180% 50%; }
+}
+
+@media (max-width: 780px) {
+  .smartactics { margin: 2px 12px 14px; padding: 14px; border-radius: 18px; }
+  .smartactics__intro h2 { font-size: 24px; }
+  .smartactic__smart { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .smartactic__smart li:nth-child(5) { grid-column: 1 / -1; }
+  .smartactic__service { align-items: stretch; flex-direction: column; }
+  .hero-composer .smartactic__service a {
+    width: 100%;
+    min-height: 50px;
+    justify-content: center;
+  }
+  .hero-composer.is-smart textarea { min-height: 132px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-composer .spin,
+  .smartactic,
+  .smartactics__skeletons span { animation: none !important; }
+}
+

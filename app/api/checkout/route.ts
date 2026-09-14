@@ -150,8 +150,9 @@ export async function POST(request: Request) {
 
   const requestOrigin = new URL(request.url).origin;
   const baseUrl = runtimeEnv.APP_BASE_URL?.replace(/\/$/, "") || requestOrigin;
+  const recurring = Boolean(service.recurrence);
   const form = new URLSearchParams();
-  form.set("mode", "payment");
+  form.set("mode", recurring ? "subscription" : "payment");
   form.set("success_url", `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`);
   form.set("cancel_url", `${baseUrl}/start?service=${encodeURIComponent(service.id)}`);
   form.set("client_reference_id", orderId);
@@ -160,11 +161,12 @@ export async function POST(request: Request) {
   form.set("line_items[0][price_data][currency]", "usd");
   form.set("line_items[0][price_data][unit_amount]", String(amountCents));
   form.set("line_items[0][price_data][product_data][name]", service.title);
-  form.set("line_items[0][price_data][product_data][description]", `${service.result}${service.recurrence ? " · ciclo mensual" : ""}`);
+  form.set("line_items[0][price_data][product_data][description]", `${service.result}${recurring ? " · ciclo mensual" : ""}`);
+  if (recurring) form.set("line_items[0][price_data][recurring][interval]", "month");
   form.set("metadata[order_id]", orderId);
   form.set("metadata[offer_version]", "1");
   form.set("metadata[recurrence]", service.recurrence?.cadence ?? "one_time");
-  form.set("payment_intent_data[metadata][order_id]", orderId);
+  if (!recurring) form.set("payment_intent_data[metadata][order_id]", orderId);
 
   const stripeResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {
     method: "POST",

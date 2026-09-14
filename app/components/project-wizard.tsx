@@ -75,6 +75,13 @@ export function ProjectWizard({ initialServiceId, initialIdea }: { initialServic
   }, [brief, draftKey, noMaterials, step]);
 
   useEffect(() => {
+    const fromUrl = new URLSearchParams(window.location.search).get("idea")?.trim() ?? "";
+    const incoming = (initialIdea || fromUrl).trim();
+    if (!incoming) return;
+    setBrief((current) => current.idea.trim() ? current : { ...current, idea: incoming });
+  }, [initialIdea]);
+
+  useEffect(() => {
     if (step > 0) stepHeadingRef.current?.focus();
   }, [step]);
 
@@ -208,10 +215,10 @@ export function ProjectWizard({ initialServiceId, initialIdea }: { initialServic
               <div className="delivery-line"><Clock3 size={20} /><div><strong>Primera entrega en hasta {service.hours} horas</strong><span>Parte con pago confirmado + brief completo aceptado.</span></div></div>
               <div className="price-line"><div><span>{service.recurrence ? "Ciclo mensual" : pricedFromIds.has(service.id) ? "Desde" : "Total"}</span><small>{service.recurrence ? "Este pago cubre el primer ciclo" : "Pago único · no es suscripción"}</small></div><strong>US${service.price}{service.recurrence ? "/mes" : ""}</strong></div>
               <label className="terms-check"><input type="checkbox" checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} /><span>{service.recurrence ? "Acepto el alcance de este ciclo mensual, una ronda de ajustes y el inicio del plazo con el brief completo." : "Acepto el alcance, una ronda de ajustes y el inicio del plazo con el brief completo."}</span></label>
-              <button className="pay-button" type="button" aria-busy={checkoutState === "loading"} disabled={!acceptedTerms || checkoutState === "loading"} onClick={beginCheckout}>{checkoutState === "loading" ? <LoaderCircle className="spin" size={20} /> : <CreditCard size={20} />}{checkoutState === "loading" ? files.length ? "Subiendo materiales…" : "Encendiendo tu proyecto…" : service.recurrence ? `Pagar primer ciclo · US$${service.price}` : `Pagar y encender mi Chizpa · US$${service.price}`}</button>
+              <button className="pay-button" type="button" aria-busy={checkoutState === "loading"} disabled={!acceptedTerms || checkoutState === "loading"} onClick={beginCheckout}>{checkoutState === "loading" ? <LoaderCircle className="spin" size={20} /> : <CreditCard size={20} />}{checkoutState === "loading" ? files.length ? "Subiendo materiales…" : "Abriendo Stripe…" : service.recurrence ? `Pagar primer ciclo · US$${service.price}` : `Pagar con Stripe · US$${service.price}`}</button>
               {!acceptedTerms && <p className="pay-helper">Marca la aceptación del alcance para continuar.</p>}
-              <p className="stripe-note"><LockKeyhole size={14} /> {service.recurrence ? "Pago seguro con Stripe. Este pago cubre un ciclo mensual." : "Pago único y seguro con Stripe. Una cosa menos en tu cabeza."}</p>
-              {checkoutState === "needs-config" && <div className="config-message"><strong>El checkout está listo para conectarse.</strong><p>Faltan las claves sandbox de Stripe en este entorno. Puedes revisar ahora el flujo posterior al pago con datos demostrativos.</p><Link href="/track?demo=CHZ-1042">Ver dashboard demo <ArrowRight size={16} /></Link></div>}
+              <p className="stripe-note"><LockKeyhole size={14} /> {service.recurrence ? "Pago seguro con Stripe. Este cobro cubre el primer ciclo mensual." : "Pago seguro con Stripe. Pago único, no es suscripción."}</p>
+              {checkoutState === "needs-config" && <div className="config-message"><strong>Falta conectar Stripe para cobrar de verdad.</strong><p>Cuando Stripe esté conectado, este botón abre el checkout. Mientras, puedes revisar el seguimiento demo.</p><Link href="/track?demo=CHZ-1042">Ver dashboard demo <ArrowRight size={16} /></Link></div>}
               {checkoutState === "error" && <p className="form-error">{error}</p>}
             </div> : <div className="review-route"><Lightbulb size={26} /><h2>{classification.decision === "wiwo" ? "Esto merece un proyecto Wiwo." : "Primero lo revisa una persona."}</h2><p>No vamos a cobrarte antes de confirmar alcance, capacidad y plazo.</p>{reviewSent ? <strong>Listo. Te escribiremos a {brief.email}.</strong> : <button type="button" onClick={() => setReviewSent(true)}>Enviar para revisión</button>}</div>}
           </div>}
