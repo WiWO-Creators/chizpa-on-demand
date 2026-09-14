@@ -31,7 +31,7 @@ button,input { font:inherit; } a { color:inherit; text-decoration:none; } img { 
 .hero__veil { position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,rgba(255,132,0,1) 0%,rgba(255,132,0,.98) 34%,rgba(255,132,0,.15) 63%,rgba(255,132,0,0) 100%); }
 .hero__content { width:min(760px,55vw); padding:80px clamp(24px,6vw,96px); }
 .eyebrow,.section-kicker { display:flex; align-items:center; gap:8px; margin:0 0 18px; color:var(--purple); font-size:12px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; }
-.hero h1,h2,h3 { font-family:"Fredoka",sans-serif; }
+.hero h1 { font-family:"Fredoka",sans-serif; }
 .hero h1 { max-width:720px; margin:0; color:var(--purple-deep); font-size:clamp(58px,7.1vw,112px); line-height:.91; letter-spacing:-.055em; }
 .hero h1 span { display:block; color:var(--purple); }
 .hero__lead { max-width:670px; margin:28px 0 0; color:var(--purple-deep); font-size:clamp(17px,1.5vw,21px); line-height:1.55; font-weight:520; }
@@ -4284,6 +4284,18 @@ footer small { font-size:11px; line-height:1.5; }
 .product-proof, .video-story, .chispireads-preview, .faq, .final-cta { padding-block: 48px; }
 .faq p { margin-top: 8px; }
 .read-card__copy p, .read-card__link { display: none; }
+
+.recurring-card h3,
+.service-card h3,
+.mode-card h3,
+.read-card h3,
+.smartactic h3 {
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif !important;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.18;
+}
+
 
 
 
