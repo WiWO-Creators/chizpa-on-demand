@@ -1,49 +1,20 @@
-import { env } from "../../lib/runtime-env";
-
-function stripeKey() {
-  const key = env("STRIPE_SECRET_KEY");
-  if (key?.startsWith("sk_") || key?.startsWith("rk_")) return key;
-  return undefined;
-}
+import { findOrders } from "../../lib/stripe-orders";
 
 export async function GET(request: Request) {
-  const key = stripeKey();
-  if (!key) return Response.json({ error: "Stripe todavía no está configurado." }, { status: 503 });
-
-  const sessionId = new URL(request.url).searchParams.get("session_id")?.trim() ?? "";
-  if (!sessionId.startsWith("cs_") || sessionId.length > 255) {
-    return Response.json({ error: "Invalid session" }, { status: 400 });
+  const params = new URL(request.url).searchParams;
+  const query = (params.get("q") || params.get("email") || params.get("code") || params.get("session_id") || "").trim();
+  if (!query || query.length > 320) {
+    return Response.json({ error: "Escribe tu mail o el código del pedido." }, { status: 400 });
   }
 
-  const stripeResponse = await fetch(`https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(sessionId)}`, {
-    headers: { Authorization: `Bearer ${key}` },
-    cache: "no-store",
-  });
-  const session = await stripeResponse.json() as {
-    payment_status?: string;
-    status?: string;
-    created?: number;
-    metadata?: Record<string, string>;
-    error?: { message?: string };
-  };
-  if (!stripeResponse.ok) {
-    return Response.json({ error: session.error?.message ?? "Order not found" }, { status: 404 });
+  try {
+    const orders = await findOrders(query);
+    if (!orders.length) return Response.json({ orders: [], error: "No encontramos un pedido con esos datos." }, { status: 404 });
+    return Response.json({ order: orders[0], orders }, { headers: { "Cache-Control": "no-store" } });
+  } catch (error) {
+    const message = error instanceof Error && error.message === "stripe_not_configured"
+      ? "Stripe todavía no está configurado."
+      : "No pudimos buscar tu pedido.";
+    return Response.json({ error: message }, { status: 503 });
   }
-
-  const paid = session.payment_status === "paid" || session.status === "complete";
-  if (!paid) return Response.json({ error: "Order not found" }, { status: 404 });
-
-  const meta = session.metadata ?? {};
-  const created = session.created ? new Date(session.created * 1000).toISOString() : new Date().toISOString();
-  return Response.json({
-    order: {
-      human_code: meta.human_code || `CHZ-${sessionId.slice(-6).toUpperCase()}`,
-      service_id: meta.service_id || "ppt-directorio",
-      payment_status: "paid",
-      brief_status: "accepted",
-      work_status: "queued",
-      due_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
-      created_at: created,
-    },
-  }, { headers: { "Cache-Control": "no-store" } });
 }

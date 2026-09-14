@@ -3842,3 +3842,89 @@ footer small { font-size:11px; line-height:1.5; }
   .smartactics__skeletons span { animation: none !important; }
 }
 
+.tracking-empty form.tracking-lookup {
+  width: min(520px, 100%);
+  margin-top: 22px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: white;
+  border: 2px solid var(--purple);
+  border-radius: 28px;
+  box-shadow: 7px 8px 0 var(--purple);
+}
+.tracking-empty form.tracking-lookup input {
+  min-height: 52px;
+  width: 100%;
+  padding: 0 18px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 800;
+}
+.tracking-empty form.tracking-lookup button {
+  min-height: 52px;
+  width: 100%;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  color: white;
+  background: var(--purple);
+  font-size: 16px;
+  font-weight: 800;
+}
+.tracking-error {
+  max-width: 520px;
+  margin: 16px 0 0;
+  color: var(--purple-deep);
+  font-weight: 800;
+}
+.tracking-pick {
+  width: min(560px, 100%);
+  margin-top: 22px;
+  display: grid;
+  gap: 12px;
+}
+.tracking-pick a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  color: var(--purple-deep);
+  background: white;
+  border: 2px solid var(--purple);
+  border-radius: 22px;
+  box-shadow: 5px 6px 0 var(--purple);
+}
+.tracking-pick a span {
+  display: grid;
+  gap: 4px;
+  text-align: left;
+}
+.tracking-pick a small {
+  color: #6b6170;
+  font-size: 12px;
+  font-weight: 650;
+}
+.tracking-pick a em {
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--purple);
+}
+.message-card a.button {
+  width: 100%;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  color: var(--purple-deep);
+  background: var(--orange);
+  font-weight: 800;
+}
+
+
