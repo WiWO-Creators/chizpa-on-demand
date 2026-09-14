@@ -4241,5 +4241,18 @@ footer small { font-size:11px; line-height:1.5; }
   transform: none;
 }
 
+.chizpa-loader__bar i {
+  width: 0;
+  transform: none;
+  animation: loader-bar-fill 1.2s cubic-bezier(.22, .8, .22, 1) forwards !important;
+}
+@keyframes loader-bar-fill {
+  from { width: 0; }
+  to { width: 100%; }
+}
+.chizpa-loader.is-leaving {
+  pointer-events: none;
+}
+
 
 

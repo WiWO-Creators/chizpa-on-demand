@@ -5,38 +5,68 @@ import { useEffect, useRef, useState } from "react";
 
 type LoaderPhase = "visible" | "leaving" | "hidden";
 
+const listeners = new Set<(phase: LoaderPhase) => void>();
+let loaderPhase: LoaderPhase = "visible";
+let loaderBooted = false;
+
 function revealVisible() {
   document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((target) => {
     target.classList.add("is-revealed");
   });
 }
 
+function finishLoader() {
+  if (loaderPhase === "hidden") return;
+  loaderPhase = "hidden";
+  document.body.classList.remove("is-preloading");
+  document.documentElement.classList.add("motion-ready");
+  try {
+    window.sessionStorage.setItem("chizpa-ready", "1");
+  } catch {
+    /* ignore */
+  }
+  revealVisible();
+  listeners.forEach((fn) => fn("hidden"));
+}
+
+function bootLoader() {
+  if (loaderBooted) return;
+  loaderBooted = true;
+
+  try {
+    if (window.sessionStorage.getItem("chizpa-ready") === "1") {
+      finishLoader();
+      return;
+    }
+  } catch {
+    /* continue with a short splash */
+  }
+
+  document.body.classList.add("is-preloading");
+  window.setTimeout(() => {
+    if (loaderPhase === "hidden") return;
+    loaderPhase = "leaving";
+    listeners.forEach((fn) => fn("leaving"));
+  }, 900);
+  window.setTimeout(finishLoader, 1400);
+}
+
 export function ExperienceLayer() {
-  const [loaderPhase, setLoaderPhase] = useState<LoaderPhase>("visible");
+  const [phase, setPhase] = useState<LoaderPhase>(loaderPhase);
   const auraRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const seen = window.sessionStorage.getItem("chizpa-ready") === "1";
-    const leaveAfter = seen || reducedMotion ? 40 : 280;
-    const hideAfter = seen || reducedMotion ? 90 : 520;
-
-    document.body.classList.add("is-preloading");
-    const leaveTimer = window.setTimeout(() => setLoaderPhase("leaving"), leaveAfter);
-    const hideTimer = window.setTimeout(() => {
-      setLoaderPhase("hidden");
-      document.body.classList.remove("is-preloading");
-      document.documentElement.classList.add("motion-ready");
-      window.sessionStorage.setItem("chizpa-ready", "1");
-      revealVisible();
-    }, hideAfter);
+    bootLoader();
+    setPhase(loaderPhase);
+    listeners.add(setPhase);
 
     const observer = new MutationObserver(revealVisible);
     observer.observe(document.body, { childList: true, subtree: true });
     window.addEventListener("pageshow", revealVisible);
-    revealVisible();
+    if (loaderPhase === "hidden") revealVisible();
 
     let frame = 0;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const canTrackPointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches && !reducedMotion;
     const trackPointer = (event: PointerEvent) => {
       if (!canTrackPointer) return;
@@ -48,20 +78,24 @@ export function ExperienceLayer() {
     window.addEventListener("pointermove", trackPointer, { passive: true });
 
     return () => {
-      window.clearTimeout(leaveTimer);
-      window.clearTimeout(hideTimer);
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener("pointermove", trackPointer);
-      window.removeEventListener("pageshow", revealVisible);
+      listeners.delete(setPhase);
       observer.disconnect();
-      document.body.classList.remove("is-preloading");
+      window.removeEventListener("pageshow", revealVisible);
+      window.removeEventListener("pointermove", trackPointer);
+      window.cancelAnimationFrame(frame);
     };
   }, []);
 
   return (
     <>
-      {loaderPhase !== "hidden" && (
-        <div className={`chizpa-loader${loaderPhase === "leaving" ? " is-leaving" : ""}`} role="status" aria-live="polite" aria-label="Preparando Chizpa.com">
+      {phase !== "hidden" && (
+        <div
+          className={`chizpa-loader${phase === "leaving" ? " is-leaving" : ""}`}
+          role="status"
+          aria-live="polite"
+          aria-label="Preparando Chizpa.com"
+          onClick={finishLoader}
+        >
           <div className="chizpa-loader__spark" aria-hidden="true"><i /><i /><i /></div>
           <div className="chizpa-loader__character">
             <Image src="/brand/chispita-meditate.webp" alt="" width={280} height={280} priority unoptimized />
