@@ -42,7 +42,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body><ExperienceLayer />{children}</body>
+      <body>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(sessionStorage.getItem("chizpa-ready")==="1")document.documentElement.classList.add("chizpa-ready")}catch(e){}`,
+          }}
+        />
+        <ExperienceLayer />
+        {children}
+      </body>
     </html>
   );
 }

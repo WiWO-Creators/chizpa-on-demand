@@ -19,7 +19,7 @@ function finishLoader() {
   if (loaderPhase === "hidden") return;
   loaderPhase = "hidden";
   document.body.classList.remove("is-preloading");
-  document.documentElement.classList.add("motion-ready");
+  document.documentElement.classList.add("motion-ready", "chizpa-ready");
   try {
     window.sessionStorage.setItem("chizpa-ready", "1");
   } catch {
@@ -34,7 +34,10 @@ function bootLoader() {
   loaderBooted = true;
 
   try {
-    if (window.sessionStorage.getItem("chizpa-ready") === "1") {
+    if (
+      window.sessionStorage.getItem("chizpa-ready") === "1" ||
+      document.documentElement.classList.contains("chizpa-ready")
+    ) {
       finishLoader();
       return;
     }
@@ -47,8 +50,8 @@ function bootLoader() {
     if (loaderPhase === "hidden") return;
     loaderPhase = "leaving";
     listeners.forEach((fn) => fn("leaving"));
-  }, 900);
-  window.setTimeout(finishLoader, 1400);
+  }, 180);
+  window.setTimeout(finishLoader, 320);
 }
 
 export function ExperienceLayer() {
