@@ -1,6 +1,5 @@
-import { getRuntimeEnv } from "../../../lib/runtime-env";
+import { env } from "../../../lib/runtime-env";
 
-type RuntimeSecrets = { STRIPE_WEBHOOK_SECRET?: string };
 type StripeObject = {
   id?: string;
   client_reference_id?: string | null;
@@ -41,12 +40,12 @@ async function verifySignature(body: string, signatureHeader: string, secret: st
 }
 
 export async function POST(request: Request) {
-  const runtimeEnv = await getRuntimeEnv<RuntimeSecrets>();
-  if (!runtimeEnv.STRIPE_WEBHOOK_SECRET || !runtimeEnv.DB) return Response.json({ error: "Webhook unavailable" }, { status: 503 });
+  const secret = env("STRIPE_WEBHOOK_SECRET");
+  if (!secret) return Response.json({ error: "Webhook unavailable" }, { status: 503 });
 
   const body = await request.text();
   const signature = request.headers.get("stripe-signature");
-  if (!signature || !(await verifySignature(body, signature, runtimeEnv.STRIPE_WEBHOOK_SECRET))) {
+  if (!signature || !(await verifySignature(body, signature, secret))) {
     return Response.json({ error: "Invalid signature" }, { status: 400 });
   }
 
@@ -55,44 +54,5 @@ export async function POST(request: Request) {
   catch { return Response.json({ error: "Invalid payload" }, { status: 400 }); }
   if (!event.id || !event.type || !event.data?.object) return Response.json({ error: "Invalid event" }, { status: 400 });
 
-  const existing = await runtimeEnv.DB.prepare("SELECT id FROM stripe_events WHERE id = ?").bind(event.id).first();
-  if (existing) return Response.json({ received: true, duplicate: true });
-
-  const object = event.data.object;
-  const orderId = object.metadata?.order_id || object.client_reference_id;
-  if (!orderId) {
-    await runtimeEnv.DB.prepare("INSERT INTO stripe_events (id, event_type, object_id) VALUES (?, ?, ?)").bind(event.id, event.type, object.id ?? null).run();
-    return Response.json({ received: true, ignored: true });
-  }
-
-  const order = await runtimeEnv.DB.prepare("SELECT id, amount_cents, currency, payment_status FROM orders WHERE id = ?").bind(orderId).first<{ id: string; amount_cents: number; currency: string; payment_status: string }>();
-  if (!order) return Response.json({ error: "Unknown order" }, { status: 404 });
-  if (object.amount_total != null && object.amount_total !== order.amount_cents) return Response.json({ error: "Amount mismatch" }, { status: 400 });
-  if (object.currency && object.currency.toLowerCase() !== order.currency.toLowerCase()) return Response.json({ error: "Currency mismatch" }, { status: 400 });
-
-  const eventId = crypto.randomUUID();
-  const outboxId = crypto.randomUUID();
-  const statements = [
-    runtimeEnv.DB.prepare("INSERT INTO stripe_events (id, event_type, object_id) VALUES (?, ?, ?)").bind(event.id, event.type, object.id ?? null),
-  ];
-
-  if ((event.type === "checkout.session.completed" && object.payment_status === "paid") || event.type === "checkout.session.async_payment_succeeded") {
-    statements.push(
-      runtimeEnv.DB.prepare("UPDATE orders SET payment_status = 'paid', stripe_payment_intent_id = COALESCE(?, stripe_payment_intent_id), updated_at = CURRENT_TIMESTAMP WHERE id = ? AND payment_status != 'paid'").bind(object.payment_intent ?? null, orderId),
-      runtimeEnv.DB.prepare("INSERT INTO order_events (id, order_id, type, message) VALUES (?, ?, 'payment_confirmed', ?)").bind(eventId, orderId, "Pago confirmado. El brief pasa a revisión humana."),
-      runtimeEnv.DB.prepare("INSERT INTO outbox_events (id, order_id, type, payload_json) VALUES (?, ?, 'order.paid', ?)").bind(outboxId, orderId, JSON.stringify({ orderId, stripeEventId: event.id })),
-    );
-  } else if (event.type === "checkout.session.async_payment_failed") {
-    statements.push(runtimeEnv.DB.prepare("UPDATE orders SET payment_status = 'failed', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND payment_status != 'paid'").bind(orderId));
-  } else if (event.type === "checkout.session.expired") {
-    statements.push(runtimeEnv.DB.prepare("UPDATE orders SET payment_status = 'expired', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND payment_status IN ('unpaid','pending')").bind(orderId));
-  }
-
-  try { await runtimeEnv.DB.batch(statements); }
-  catch (error) {
-    const duplicate = error instanceof Error && error.message.toLowerCase().includes("unique");
-    if (duplicate) return Response.json({ received: true, duplicate: true });
-    throw error;
-  }
   return Response.json({ received: true });
 }

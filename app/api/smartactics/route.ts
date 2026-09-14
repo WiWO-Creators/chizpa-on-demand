@@ -1,7 +1,6 @@
 import { catalogIdSet, compactCatalog, fallbackPlan, hydrateTactics, type RawTactic, type SmartacticsPlan } from "../../lib/smartactics";
-import { getRuntimeEnv } from "../../lib/runtime-env";
+import { env } from "../../lib/runtime-env";
 
-type RuntimeSecrets = { XAI_API_KEY?: string };
 type RecommendOk = { ok: true } & SmartacticsPlan;
 type RecommendErr = { ok: false; error: string };
 
@@ -44,8 +43,7 @@ export async function POST(request: Request) {
   const cached = cache.get(cacheKey);
   if (cached) return Response.json(cached);
 
-  const runtimeEnv = await getRuntimeEnv<RuntimeSecrets>().catch(() => ({}) as RuntimeSecrets);
-  const apiKey = runtimeEnv.XAI_API_KEY || process.env.XAI_API_KEY;
+  const apiKey = env("XAI_API_KEY");
   if (!apiKey) return Response.json(remember(cacheKey, { ok: true, ...fallbackPlan(idea) }));
 
   try {

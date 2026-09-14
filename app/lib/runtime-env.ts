@@ -1,12 +1,10 @@
-type CloudflareBindings = typeof import("cloudflare:workers").env;
+type EnvBag = Record<string, string | undefined>;
 
-/**
- * Resolve Worker bindings lazily. Sites validates the built Worker in a Node
- * process, where the `cloudflare:` protocol is unavailable at module load.
- * Request handlers still receive the real bindings when they execute on
- * Cloudflare.
- */
+export function env(key: string): string | undefined {
+  const value = process.env[key]?.trim();
+  return value || undefined;
+}
+
 export async function getRuntimeEnv<Extra extends object = Record<string, never>>() {
-  const { env } = await import("cloudflare:workers");
-  return env as CloudflareBindings & Extra;
+  return process.env as unknown as EnvBag & Extra;
 }

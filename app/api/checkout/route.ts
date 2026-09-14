@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { calculateChizpaScore, classifyProject } from "../../lib/classify";
-import { getRuntimeEnv } from "../../lib/runtime-env";
+import { env } from "../../lib/runtime-env";
 import { services } from "../../data/services";
 
 const briefSchema = z.object({
@@ -20,27 +20,23 @@ const requestSchema = z.object({
   chizpaScore: z.number().optional(),
 });
 
-type RuntimeSecrets = {
-  STRIPE_SECRET_KEY?: string;
-  APP_BASE_URL?: string;
-  BUCKET?: {
-    put: (key: string, value: ArrayBuffer, options?: { httpMetadata?: { contentType?: string }; customMetadata?: Record<string, string> }) => Promise<unknown>;
-    delete: (keys: string | string[]) => Promise<void>;
-  };
-};
-
 const MAX_FILES = 5;
-const MAX_FILE_BYTES = 15 * 1024 * 1024;
-const MAX_TOTAL_BYTES = 40 * 1024 * 1024;
+const MAX_FILE_BYTES = 4 * 1024 * 1024;
+const MAX_TOTAL_BYTES = 8 * 1024 * 1024;
 const allowedExtensions = new Set(["ppt", "pptx", "doc", "docx", "xls", "xlsx", "pdf", "png", "jpg", "jpeg", "webp", "mp3", "wav", "mp4", "mov", "zip"]);
 
 function fileExtension(name: string) {
   return name.split(".").pop()?.toLocaleLowerCase("es") ?? "";
 }
 
-function safeFileName(name: string) {
-  const cleaned = name.normalize("NFKD").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
-  return cleaned.slice(-120) || "material";
+function stripeKey() {
+  const key = env("STRIPE_SECRET_KEY");
+  if (key?.startsWith("sk_") || key?.startsWith("rk_")) return key;
+  return undefined;
+}
+
+function clip(value: string, max: number) {
+  return value.trim().slice(0, max);
 }
 
 export async function POST(request: Request) {
@@ -75,82 +71,23 @@ export async function POST(request: Request) {
     return Response.json({ error: classification.explanation, code: `scope_${classification.decision}` }, { status: 422 });
   }
 
-  const runtimeEnv = await getRuntimeEnv<RuntimeSecrets>();
-  if (!runtimeEnv.STRIPE_SECRET_KEY) {
+  const key = stripeKey();
+  if (!key) {
     return Response.json({
       error: "Stripe todavía no está configurado en este entorno.",
       code: "stripe_not_configured",
     }, { status: 503 });
-  }
-  if (!runtimeEnv.DB) {
-    return Response.json({ error: "La base de pedidos no está disponible.", code: "database_not_configured" }, { status: 503 });
-  }
-  if (files.length && !runtimeEnv.BUCKET) {
-    return Response.json({ error: "La carga de materiales todavía no está disponible.", code: "storage_not_configured" }, { status: 503 });
   }
 
   const orderId = crypto.randomUUID();
   const humanCode = `CHZ-${orderId.slice(0, 6).toUpperCase()}`;
   const amountCents = service.price * 100;
   const score = calculateChizpaScore(brief);
-  const scopeSnapshot = {
-    version: 1,
-    serviceId: service.id,
-    title: service.title,
-    result: service.result,
-    includes: service.includes,
-    needs: service.needs,
-    revisions: service.revisions,
-    promisedHours: service.hours,
-    recurrence: service.recurrence ?? null,
-    amountCents,
-    currency: "usd",
-  };
-
-  const attachmentSummary = files.map((file) => ({ name: file.name, size: file.size, type: file.type || "application/octet-stream" }));
-  await runtimeEnv.DB.batch([
-    runtimeEnv.DB.prepare(`INSERT INTO orders (
-      id, human_code, service_id, project_idea, customer_email, brief_json,
-      scope_snapshot_json, chizpa_score, amount_cents, currency,
-      payment_status, brief_status, work_status
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'usd', 'unpaid', 'submitted', 'blocked')`).bind(
-      orderId, humanCode, service.id, brief.idea, brief.email,
-      JSON.stringify({ ...brief, attachments: attachmentSummary }), JSON.stringify(scopeSnapshot), score, amountCents,
-    ),
-    runtimeEnv.DB.prepare("INSERT INTO order_events (id, order_id, type, message) VALUES (?, ?, 'brief_submitted', ?)").bind(
-      crypto.randomUUID(), orderId, "Chispita convirtió el pedido en un brief estructurado.",
-    ),
-  ]);
-
-  if (files.length && runtimeEnv.BUCKET) {
-    const uploadedKeys: string[] = [];
-    const fileRows: Array<{ id: string; key: string; file: File }> = [];
-    try {
-      for (const file of files) {
-        const fileId = crypto.randomUUID();
-        const key = `orders/${orderId}/source/${fileId}-${safeFileName(file.name)}`;
-        await runtimeEnv.BUCKET.put(key, await file.arrayBuffer(), {
-          httpMetadata: { contentType: file.type || "application/octet-stream" },
-          customMetadata: { orderId, originalName: file.name.slice(0, 240) },
-        });
-        uploadedKeys.push(key);
-        fileRows.push({ id: fileId, key, file });
-      }
-      await runtimeEnv.DB.batch(fileRows.map(({ id, key, file }) => runtimeEnv.DB!.prepare(`INSERT INTO order_files (
-        id, order_id, object_key, original_name, content_type, size_bytes, status
-      ) VALUES (?, ?, ?, ?, ?, ?, 'received')`).bind(id, orderId, key, file.name, file.type || "application/octet-stream", file.size)));
-      await runtimeEnv.DB.prepare("INSERT INTO order_events (id, order_id, type, message) VALUES (?, ?, 'materials_received', ?)")
-        .bind(crypto.randomUUID(), orderId, `${files.length} ${files.length === 1 ? "material recibido" : "materiales recibidos"} con el brief.`).run();
-    } catch {
-      if (uploadedKeys.length) await runtimeEnv.BUCKET.delete(uploadedKeys).catch(() => undefined);
-      await runtimeEnv.DB.prepare("UPDATE orders SET brief_status = 'upload_failed', updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(orderId).run();
-      return Response.json({ error: "No pudimos guardar tus materiales. Tu pago no fue iniciado; prueba nuevamente." }, { status: 500 });
-    }
-  }
-
-  const requestOrigin = new URL(request.url).origin;
-  const baseUrl = runtimeEnv.APP_BASE_URL?.replace(/\/$/, "") || requestOrigin;
   const recurring = Boolean(service.recurrence);
+  const requestOrigin = new URL(request.url).origin;
+  const baseUrl = env("APP_BASE_URL")?.replace(/\/$/, "") || requestOrigin;
+  const fileNames = files.map((file) => file.name).join(", ");
+
   const form = new URLSearchParams();
   form.set("mode", recurring ? "subscription" : "payment");
   form.set("success_url", `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`);
@@ -161,17 +98,22 @@ export async function POST(request: Request) {
   form.set("line_items[0][price_data][currency]", "usd");
   form.set("line_items[0][price_data][unit_amount]", String(amountCents));
   form.set("line_items[0][price_data][product_data][name]", service.title);
-  form.set("line_items[0][price_data][product_data][description]", `${service.result}${recurring ? " · ciclo mensual" : ""}`);
+  form.set("line_items[0][price_data][product_data][description]", clip(`${service.result}${recurring ? " · ciclo mensual" : ""}`, 240));
   if (recurring) form.set("line_items[0][price_data][recurring][interval]", "month");
   form.set("metadata[order_id]", orderId);
-  form.set("metadata[offer_version]", "1");
+  form.set("metadata[human_code]", humanCode);
+  form.set("metadata[service_id]", service.id);
+  form.set("metadata[email]", clip(brief.email, 320));
+  form.set("metadata[idea]", clip(brief.idea, 450));
+  form.set("metadata[score]", String(score));
+  form.set("metadata[files]", clip(fileNames, 400));
   form.set("metadata[recurrence]", service.recurrence?.cadence ?? "one_time");
   if (!recurring) form.set("payment_intent_data[metadata][order_id]", orderId);
 
   const stripeResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${runtimeEnv.STRIPE_SECRET_KEY}`,
+      Authorization: `Bearer ${key}`,
       "Content-Type": "application/x-www-form-urlencoded",
       "Idempotency-Key": `checkout:${orderId}:1`,
     },
@@ -179,11 +121,8 @@ export async function POST(request: Request) {
   });
   const stripePayload = await stripeResponse.json() as { id?: string; url?: string; error?: { message?: string } };
   if (!stripeResponse.ok || !stripePayload.id || !stripePayload.url) {
-    await runtimeEnv.DB.prepare("UPDATE orders SET payment_status = 'failed', updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(orderId).run();
     return Response.json({ error: stripePayload.error?.message ?? "Stripe no pudo abrir el checkout." }, { status: 502 });
   }
 
-  await runtimeEnv.DB.prepare("UPDATE orders SET payment_status = 'pending', stripe_session_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
-    .bind(stripePayload.id, orderId).run();
   return Response.json({ url: stripePayload.url, orderCode: humanCode });
 }

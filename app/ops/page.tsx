@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { AlertTriangle, CheckCircle2, Clock3, FileText, Search, Sparkles, UserRound } from "lucide-react";
-import { chatGPTSignOutPath, requireChatGPTUser } from "../chatgpt-auth";
-import { getRuntimeEnv } from "../lib/runtime-env";
+import { CheckCircle2, Clock3, FileText, Search, Sparkles, UserRound } from "lucide-react";
+import { getChatGPTUser } from "../chatgpt-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -19,27 +18,17 @@ function statusLabel(status: string) {
 }
 
 export default async function OpsPage() {
-  const user = await requireChatGPTUser("/ops");
-  const runtime = await getRuntimeEnv<{ CHIZPA_TEAM_EMAILS?: string }>();
-  const allowlist = runtime.CHIZPA_TEAM_EMAILS?.split(",").map((email: string) => email.trim().toLowerCase()).filter(Boolean) ?? [];
-  if (allowlist.length && !allowlist.includes(user.email.toLowerCase())) return <main className="ops-denied"><AlertTriangle size={42} /><h1>Esta cola es del equipo Wiwo.</h1><p>Tu sesión está activa, pero tu email no está en la lista operativa.</p></main>;
-
-  let rows: OpsOrder[] = [];
-  try {
-    if (runtime.DB) {
-      const result = await runtime.DB.prepare(`SELECT human_code, service_id, work_status, payment_status,
-        chizpa_score, customer_email, due_at, created_at FROM orders ORDER BY created_at DESC LIMIT 30`).all<OpsOrder>();
-      rows = result.results;
-    }
-  } catch { rows = []; }
-  const orders = rows.length ? rows : demos;
+  const user = await getChatGPTUser();
+  const displayName = user?.displayName ?? "Equipo Wiwo";
+  const email = user?.email ?? "ops@chizpa.com";
+  const orders = demos;
 
   return <main className="ops-shell">
-    <aside className="ops-sidebar"><Link className="wordmark wordmark--compact" href="/">chizpa<span>.com</span><i aria-hidden="true"><b /><b /><b /></i></Link><nav><Link className="is-active" href="/ops"><Sparkles size={18} /> Cola</Link><a href="#capacidad"><Clock3 size={18} /> Capacidad</a><a href="#equipo"><UserRound size={18} /> Equipo</a></nav><div><span>{user.displayName}</span><small>{user.email}</small><a href={chatGPTSignOutPath("/")}>Cerrar sesión</a></div></aside>
+    <aside className="ops-sidebar"><Link className="wordmark wordmark--compact" href="/">chizpa<span>.com</span><i aria-hidden="true"><b /><b /><b /></i></Link><nav><Link className="is-active" href="/ops"><Sparkles size={18} /> Cola</Link><a href="#capacidad"><Clock3 size={18} /> Capacidad</a><a href="#equipo"><UserRound size={18} /> Equipo</a></nav><div><span>{displayName}</span><small>{email}</small></div></aside>
     <section className="ops-main">
       <header className="ops-top"><div><p>Operaciones Wiwo</p><h1>Lo que estamos chizeando.</h1></div><label><Search size={18} /><input placeholder="Buscar pedido" /></label></header>
       <div className="ops-metrics"><article><span>En cola</span><strong>{orders.filter((order) => order.work_status === "queued").length}</strong><small>requieren asignación</small></article><article><span>En producción</span><strong>{orders.filter((order) => order.work_status === "in_production").length}</strong><small>trabajando ahora</small></article><article><span>En QA</span><strong>{orders.filter((order) => order.work_status === "qa").length}</strong><small>control humano</small></article><article className="ops-metric--orange"><span>SLA</span><strong>96%</strong><small>entregas a tiempo</small></article></div>
-      <div className="ops-table-wrap"><div className="ops-table-head"><div><h2>Pedidos activos</h2><span>{rows.length ? "Datos del entorno" : "Datos demostrativos"}</span></div><button>+ Nueva Chizpa manual</button></div><div className="ops-table">
+      <div className="ops-table-wrap"><div className="ops-table-head"><div><h2>Pedidos activos</h2><span>Datos demostrativos</span></div><button>+ Nueva Chizpa manual</button></div><div className="ops-table">
         {orders.map((order) => <article key={order.human_code}><div className="ops-order-id"><FileText size={18} /><div><strong>{order.human_code}</strong><span>{order.service_id.replaceAll("-"," ")}</span></div></div><div><span>Cliente</span><strong>{order.customer_email}</strong></div><div><span>Score</span><strong className="ops-score">{order.chizpa_score}</strong></div><div><span>Entrega</span><strong>{order.due_at ?? "Al aceptar brief"}</strong></div><div><span>Estado</span><strong className={`ops-status ops-status--${order.work_status}`}>{statusLabel(order.work_status)}</strong></div><button aria-label={`Abrir ${order.human_code}`}>Abrir</button></article>)}
       </div></div>
       <section className="ops-capacity" id="capacidad"><div><p className="section-kicker">Guardrail de 72 horas</p><h2>Chispita recomienda. El equipo decide y compromete.</h2><p>Un pedido solo entra a producción cuando pago, brief aceptado y capacidad están confirmados. No vendemos urgencias falsas.</p></div><div><CheckCircle2 size={30} /><strong>8 Chizpas</strong><span>capacidad disponible hoy</span></div></section>
