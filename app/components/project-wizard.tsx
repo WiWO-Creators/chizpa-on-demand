@@ -18,6 +18,73 @@ const steps = ["Proyecto", "Materiales", "Resultado", "Confirmar"];
 const pricedFromIds = new Set(["landing-express", "automatizacion-simple", "mini-herramienta"]);
 const wizardCharacters = ["/brand/chispita-point.webp", "/brand/chispita-laptop.webp", "/brand/chispita-cool.webp", "/brand/chispita-walk.webp"];
 
+function productCopy(service: { id: string; title: string; category: ServiceCategory; hours: number; price: number; result: string; needs: string[]; revisions: number } | null | undefined) {
+  const category = service?.category;
+  if (category === "Presentaciones") {
+    return {
+      heading: `Armemos tu ${service?.title.toLowerCase() ?? "presentación"}.`,
+      lead: "Qué vendes o cuentas, a quién se la vas a presentar y qué quieres que haga esa persona.",
+      ideaLabel: "Qué tienes que presentar",
+      ideaPlaceholder: "Ej: Tengo 38 slides de resultados y necesito 12 claras para el directorio del viernes.",
+      audienceLabel: "¿A quién se la vas a presentar?",
+      audiencePlaceholder: "Directorio, clientes, inversionistas, equipo…",
+      outcomes: ["Convencer", "Informar", "Aprobar un presupuesto", "Cerrar una venta"],
+      materialsLead: "Una carpeta de Drive con la PPT, la marca y los datos es lo más útil.",
+      materialsPlaceholder: "Pega el link de Drive o Dropbox. Da acceso a cualquiera con el enlace.",
+    };
+  }
+  if (category === "Videos") {
+    return {
+      heading: `Dejemos listo tu ${service?.title.toLowerCase() ?? "video"}.`,
+      lead: "Qué hay que contar, a quién y dónde se va a ver.",
+      ideaLabel: "Qué video necesitas",
+      ideaPlaceholder: "Ej: Tengo 40 fotos del matrimonio y quiero un video de 90 segundos para compartir.",
+      audienceLabel: "¿Quién lo va a ver y dónde?",
+      audiencePlaceholder: "Invitados, Instagram, YouTube, el equipo…",
+      outcomes: ["Emocionar", "Mostrar un producto", "Explicar", "Recordar"],
+      materialsLead: "Para video, una carpeta compartida funciona mejor que adjuntar archivos pesados (máx. 4 MB acá).",
+      materialsPlaceholder: "Pega la carpeta de Drive/Dropbox. Permiso: cualquiera con el enlace puede ver.",
+    };
+  }
+  if (service?.id === "cv-linkedin") {
+    return {
+      heading: "Dejemos tu CV y LinkedIn listos para usar.",
+      lead: "A qué te postulas, qué experiencia pesa y qué tono quieres.",
+      ideaLabel: "Para qué lo necesitas",
+      ideaPlaceholder: "Ej: Busco trabajo de product manager y mi CV actual no se entiende en 10 segundos.",
+      audienceLabel: "¿Quién lo va a leer?",
+      audiencePlaceholder: "Reclutadores, founders, un directorio de empresa…",
+      outcomes: ["Conseguir entrevistas", "Ordenar mi historia", "Actualizar LinkedIn"],
+      materialsLead: "Adjunta el CV actual o pega el link de LinkedIn.",
+      materialsPlaceholder: "Link de LinkedIn, Drive o el archivo que ya tienes.",
+    };
+  }
+  if (category === "Herramientas") {
+    return {
+      heading: `Resolvamos ${service?.title.toLowerCase() ?? "esa herramienta"}.`,
+      lead: "Qué tarea se repite, con qué datos y qué debería quedar funcionando.",
+      ideaLabel: "Qué hay que automatizar o construir",
+      ideaPlaceholder: "Ej: Cada lunes copio datos de un Excel a un mail. Quiero que pase solo.",
+      audienceLabel: "¿Quién lo va a usar?",
+      audiencePlaceholder: "Yo, el equipo comercial, operaciones…",
+      outcomes: ["Ahorrar tiempo", "Dejar de copiar datos", "Tener un tablero"],
+      materialsLead: "Un ejemplo de la tarea (planilla, mail, captura) basta para partir.",
+      materialsPlaceholder: "Link a la planilla, el formulario o una captura del flujo actual.",
+    };
+  }
+  return {
+    heading: "¿Qué necesitas dejar listo?",
+    lead: "Cuéntalo como se lo contarías a una persona. El formulario ya conoce el producto que elegiste.",
+    ideaLabel: "Tu proyecto",
+    ideaPlaceholder: "Ej: Tengo una PPT de 38 slides y necesito dejarla en 12 para el directorio del viernes…",
+    audienceLabel: "¿Quién lo va a ver o usar?",
+    audiencePlaceholder: "El directorio, mi profesor, invitados…",
+    outcomes,
+    materialsLead: "Un borrador, links o fotos sirven. También puedes seguir sin nada.",
+    materialsPlaceholder: "Pega links de Drive, una web, referencias o cualquier pista útil.",
+  };
+}
+
 const formatChoices: Record<ServiceCategory | "default", string[]> = {
   Presentaciones: ["PPTX editable", "Google Slides", "PPTX + PDF", "Que Chispita recomiende"],
   Videos: ["Video vertical", "Video horizontal", "Ambos formatos", "Que Chispita recomiende"],
@@ -46,6 +113,7 @@ export function ProjectWizard({ initialServiceId, initialIdea }: { initialServic
   const score = calculateChizpaScore(brief);
   const eligible = classification.decision === "eligible" && Boolean(service);
   const wizardCharacter = checkoutState === "loading" ? "/brand/chispita-walk.webp" : wizardCharacters[step];
+  const copy = productCopy(service);
 
   const draftKey = `chizpa-draft:${initialServiceId ?? "open"}`;
 
@@ -156,17 +224,24 @@ export function ProjectWizard({ initialServiceId, initialIdea }: { initialServic
             <div className="chispita-avatar" role="img" aria-label="Chispita, tu guía para crear el brief"><Image key={wizardCharacter} src={wizardCharacter} alt="" fill unoptimized sizes="96px" /></div>
             <div className="chispita-bubble">
               <p className="section-kicker">Chispita</p>
-              {step === 0 && <><h2>Partamos por el resultado.</h2><p>Qué necesitas, para qué y quién lo va a usar. Una frase basta para partir.</p></>}
-              {step === 1 && <><h2>Trae lo que tengas. O nada.</h2><p>Arrastra archivos, pega links o sigue sin materiales. Cero drama.</p></>}
+              {step === 0 && <><h2>{copy.heading}</h2><p>{copy.lead}</p></>}
+              {step === 1 && <><h2>Trae lo que tengas. O un link.</h2><p>{copy.materialsLead}</p></>}
               {step === 2 && <><h2>Ahora dime cómo debe quedar.</h2><p>Tono, formato y plazo. Chispita ordena el resto.</p></>}
               {step === 3 && <><h2>Esto es exactamente lo que compras.</h2><p>Revisa alcance, precio y fecha. Después del pago, el equipo parte.</p></>}
             </div>
           </div>
 
           <div className="wizard-product">
-            <span>Proyecto detectado</span>
+            <span>Estás pidiendo</span>
             <strong>{service?.title ?? "Todavía te estoy entendiendo"}</strong>
-            {service ? <div><small>{service.recurrence ? <><Repeat2 size={13} /> Ciclo mensual</> : pricedFromIds.has(service.id) ? "Desde" : "Precio fijo"}</small><b>US${service.price}{service.recurrence ? "/mes" : ""}</b></div> : <p>Escribe una frase y te recomiendo la Chizpa correcta.</p>}
+            {service ? (
+              <ul className="wizard-product__facts">
+                <li>{service.result}</li>
+                <li>1 ronda de ajustes</li>
+                <li>Hasta {service.hours} h · US${service.price}{service.recurrence ? "/mes" : ""}</li>
+                <li>Cobro en USD · plazo desde brief aceptado</li>
+              </ul>
+            ) : <p>Escribe una frase y te recomiendo el proyecto correcto.</p>}
           </div>
 
           {brief.idea.trim().length >= 12 && <div className="score-mini"><span>Brief listo</span><strong>{score}%</strong><div><i style={{ width: `${score}%` }} /></div><small>{score >= 85 ? "Listo para producir" : "Seguimos completando"}</small></div>}
@@ -176,20 +251,20 @@ export function ProjectWizard({ initialServiceId, initialIdea }: { initialServic
           {draftRestored && <div className="draft-restored" role="status"><CheckCircle2 size={18} /><span><strong>Tu proyecto sigue aquí.</strong> Recuperamos lo que ya habías contado.</span><button type="button" onClick={() => setDraftRestored(false)} aria-label="Cerrar aviso">×</button></div>}
           <p className="sr-only" aria-live="polite">Paso {step + 1} de {steps.length}: {steps[step]}</p>
           {step === 0 && <div className="wizard-step">
-            <p className="wizard-step__count">Paso 1 de 4 · Proyecto</p><h1 ref={stepHeadingRef} tabIndex={-1}>¿Qué necesitas dejar listo?</h1><p className="wizard-step__lead">Cuéntalo como se lo contarías a una persona. Puede ser de trabajo, estudio, algo personal o una herramienta.</p>
-            <label className="textarea-field"><span>Tu proyecto</span><textarea value={brief.idea} onChange={(event) => setField("idea", event.target.value)} placeholder="Ej: Tengo una PPT de 38 slides y necesito dejarla en 12 para el directorio del viernes…" rows={5} /><small>{brief.idea.length < 12 ? "Dame al menos una frase para entenderlo bien." : "Perfecto. Ya tengo por dónde partir."}</small></label>
-            {service && <div className="service-detected" role="status"><Sparkles size={19} /><div><strong>Esto se parece a {service.title}.</strong><span>{service.result} · US${service.price}{service.recurrence ? " por ciclo mensual" : ""} · hasta {service.hours} h</span></div></div>}
-            <div className="field-group field-group--spaced"><span>¿Qué tiene que lograr?</span><div className="choice-grid choice-grid--outcomes">{outcomes.map((item) => <button type="button" key={item} aria-pressed={brief.outcome === item} className={brief.outcome === item ? "is-selected" : ""} onClick={() => setField("outcome", item)}>{item}{brief.outcome === item && <CheckCircle2 size={17} />}</button>)}</div></div>
-            <label className="text-field"><span>¿Quién lo va a ver o usar?</span><input value={brief.audience} onChange={(event) => setField("audience", event.target.value)} placeholder="Ej: El directorio, mi profesor, invitados al matrimonio…" /></label>
+            <p className="wizard-step__count">Paso 1 de 4 · Proyecto</p><h1 ref={stepHeadingRef} tabIndex={-1}>{copy.heading}</h1><p className="wizard-step__lead">{copy.lead}</p>
+            <label className="textarea-field"><span>{copy.ideaLabel}</span><textarea value={brief.idea} onChange={(event) => setField("idea", event.target.value)} placeholder={copy.ideaPlaceholder} rows={5} /><small>{brief.idea.length < 12 ? "Dame al menos una frase para entenderlo bien." : "Perfecto. Ya tengo por dónde partir."}</small></label>
+            {service && <div className="service-detected" role="status"><Sparkles size={19} /><div><strong>{service.title}</strong><span>{service.result} · US${service.price}{service.recurrence ? " por ciclo mensual" : ""} · hasta {service.hours} h · cobro en USD</span></div></div>}
+            <div className="field-group field-group--spaced"><span>¿Qué tiene que lograr?</span><div className="choice-grid choice-grid--outcomes">{copy.outcomes.map((item) => <button type="button" key={item} aria-pressed={brief.outcome === item} className={brief.outcome === item ? "is-selected" : ""} onClick={() => setField("outcome", item)}>{item}{brief.outcome === item && <CheckCircle2 size={17} />}</button>)}</div></div>
+            <label className="text-field"><span>{copy.audienceLabel}</span><input value={brief.audience} onChange={(event) => setField("audience", event.target.value)} placeholder={copy.audiencePlaceholder} /></label>
           </div>}
 
           {step === 1 && <div className="wizard-step">
-            <p className="wizard-step__count">Paso 2 de 4 · Materiales</p><h1 ref={stepHeadingRef} tabIndex={-1}>Trae lo que tengas.</h1><p className="wizard-step__lead">Un borrador desordenado, links, fotos o archivos sirven. También puedes seguir sin nada.</p>
+            <p className="wizard-step__count">Paso 2 de 4 · Materiales</p><h1 ref={stepHeadingRef} tabIndex={-1}>Comparte una carpeta o adjunta lo esencial.</h1><p className="wizard-step__lead">{copy.materialsLead}</p>
+            <label className="textarea-field"><span>Carpeta o links (recomendado)</span><textarea value={brief.materials} onChange={(event) => { setField("materials", event.target.value); if (event.target.value.trim()) setNoMaterials(false); }} placeholder={copy.materialsPlaceholder} rows={3} /></label>
+            <div className="materials-or"><span>o adjunta archivos livianos</span></div>
             <ProjectFilesDropzone files={files} onChange={(next) => { setFiles(next); if (next.length) setNoMaterials(false); }} />
-            <div className="materials-or"><span>o</span></div>
-            <label className="textarea-field textarea-field--small"><span>Links o contexto adicional</span><textarea value={brief.materials} onChange={(event) => { setField("materials", event.target.value); if (event.target.value.trim()) setNoMaterials(false); }} placeholder="Pega links de Drive, una web, referencias o cualquier pista útil." rows={3} /></label>
             <label className="no-materials-check"><input type="checkbox" checked={noMaterials} onChange={(event) => { setNoMaterials(event.target.checked); if (event.target.checked) setFiles([]); }} /><span><strong>Todavía no tengo materiales.</strong><small>Puedo seguir igual y reunirlos después.</small></span></label>
-            <p className="privacy-note"><LockKeyhole size={16} /> Tus archivos son privados y solo se usan para completar tu pedido.</p>
+            <p className="privacy-note"><LockKeyhole size={16} /> Tus archivos son privados. Para video, una carpeta con acceso “cualquiera con el enlace” evita el límite de 4 MB.</p>
           </div>}
 
           {step === 2 && <div className="wizard-step">
@@ -213,7 +288,7 @@ export function ProjectWizard({ initialServiceId, initialIdea }: { initialServic
               <div className="checkout-summary__top"><div><span>{service.category}{service.recurrence && <i className="checkout-recurring"><Repeat2 size={14} /> Cada mes</i>}</span><h2>{service.title}</h2></div><div className="score-large"><Check size={24} /><span>Brief listo</span></div></div>
               <ul>{service.includes.map((item) => <li key={item}><Check size={16} /> {item}</li>)}</ul>
               <div className="delivery-line"><Clock3 size={20} /><div><strong>Primera entrega en hasta {service.hours} horas</strong><span>Parte con pago confirmado + brief completo aceptado.</span></div></div>
-              <div className="price-line"><div><span>{service.recurrence ? "Ciclo mensual" : pricedFromIds.has(service.id) ? "Desde" : "Total"}</span><small>{service.recurrence ? "Este pago cubre el primer ciclo" : "Pago único · no es suscripción"}</small></div><strong>US${service.price}{service.recurrence ? "/mes" : ""}</strong></div>
+              <div className="price-line"><div><span>{service.recurrence ? "Ciclo mensual · USD" : pricedFromIds.has(service.id) ? "Desde · USD" : "Total · USD"}</span><small>{service.recurrence ? "Este pago cubre el primer ciclo. Se renueva cada mes hasta que canceles." : "Pago único, no es suscripción. Cobro en dólares."}</small></div><strong>US${service.price}{service.recurrence ? "/mes" : ""}</strong></div>
               <label className="terms-check"><input type="checkbox" checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} /><span>{service.recurrence ? "Acepto el alcance de este ciclo mensual, una ronda de ajustes y el inicio del plazo con el brief completo." : "Acepto el alcance, una ronda de ajustes y el inicio del plazo con el brief completo."}</span></label>
               <button className="pay-button" type="button" aria-busy={checkoutState === "loading"} disabled={!acceptedTerms || checkoutState === "loading"} onClick={beginCheckout}>{checkoutState === "loading" ? <LoaderCircle className="spin" size={20} /> : <CreditCard size={20} />}{checkoutState === "loading" ? files.length ? "Subiendo materiales…" : "Abriendo Stripe…" : service.recurrence ? `Pagar primer ciclo · US$${service.price}` : `Pagar con Stripe · US$${service.price}`}</button>
               {!acceptedTerms && <p className="pay-helper">Marca la aceptación del alcance para continuar.</p>}

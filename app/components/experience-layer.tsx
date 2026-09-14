@@ -5,35 +5,36 @@ import { useEffect, useRef, useState } from "react";
 
 type LoaderPhase = "visible" | "leaving" | "hidden";
 
+function revealVisible() {
+  document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((target) => {
+    target.classList.add("is-revealed");
+  });
+}
+
 export function ExperienceLayer() {
   const [loaderPhase, setLoaderPhase] = useState<LoaderPhase>("visible");
   const auraRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const leaveAfter = reducedMotion ? 100 : 520;
-    const hideAfter = reducedMotion ? 180 : 900;
+    const seen = window.sessionStorage.getItem("chizpa-ready") === "1";
+    const leaveAfter = seen || reducedMotion ? 40 : 280;
+    const hideAfter = seen || reducedMotion ? 90 : 520;
 
-    document.documentElement.classList.add("motion-ready");
     document.body.classList.add("is-preloading");
     const leaveTimer = window.setTimeout(() => setLoaderPhase("leaving"), leaveAfter);
     const hideTimer = window.setTimeout(() => {
       setLoaderPhase("hidden");
       document.body.classList.remove("is-preloading");
+      document.documentElement.classList.add("motion-ready");
+      window.sessionStorage.setItem("chizpa-ready", "1");
+      revealVisible();
     }, hideAfter);
 
-    const revealTargets = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-revealed");
-          observer.unobserve(entry.target);
-        });
-      },
-      { rootMargin: "0px 0px -8%", threshold: 0.12 },
-    );
-    revealTargets.forEach((target) => observer.observe(target));
+    const observer = new MutationObserver(revealVisible);
+    observer.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener("pageshow", revealVisible);
+    revealVisible();
 
     let frame = 0;
     const canTrackPointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches && !reducedMotion;
@@ -51,9 +52,9 @@ export function ExperienceLayer() {
       window.clearTimeout(hideTimer);
       window.cancelAnimationFrame(frame);
       window.removeEventListener("pointermove", trackPointer);
+      window.removeEventListener("pageshow", revealVisible);
       observer.disconnect();
       document.body.classList.remove("is-preloading");
-      document.documentElement.classList.remove("motion-ready");
     };
   }, []);
 

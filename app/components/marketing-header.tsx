@@ -25,7 +25,7 @@ export function MarketingHeader() {
     <Wordmark compact />
     <button className="site-header__menu" type="button" aria-expanded={open} aria-controls="site-navigation" aria-label={open ? "Cerrar menú" : "Abrir menú"} onClick={() => setOpen((value) => !value)}>{open ? <X size={21} /> : <Menu size={21} />}</button>
     <nav id="site-navigation" aria-label="Navegación principal">
-      <Link href="/#proyectos" onClick={close}>Proyectos</Link>
+      <Link href="/#destacados" onClick={close}>Proyectos</Link>
       <Link href="/#recurrentes" onClick={close}>Recurrentes</Link>
       <Link href="/#como-comprar" onClick={close}>Cómo comprar</Link>
       <Link href="/chispireads" onClick={close}>ChispiReads</Link>
