@@ -2,15 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, LoaderCircle, Sparkles, Target } from "lucide-react";
+import { ArrowRight, Clock3, LoaderCircle, Repeat2, Sparkles, Target } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import type { HydratedTactic, SmartacticsPlan } from "../lib/smartactics";
 
 const heroExamples = ["PPT de directorio", "Editar una tesis", "Video de matrimonio", "Automatizar una tarea"];
 const loadingLines = [
   "Leyendo lo que contaste…",
-  "Eligiendo la mejor opción…",
-  "Armando precio y plazo…",
+  "Armando SMARTactics…",
+  "Eligiendo Chizpas para pagar y partir…",
 ];
 
 type RecommendOk = { ok: true } & SmartacticsPlan;
@@ -71,7 +71,7 @@ export function HeroComposer() {
   const statusLabel = status === "loading"
     ? "Pensando"
     : ready
-      ? "Opciones listas"
+      ? "SMARTactics listas"
       : awake
         ? "Idea detectada"
         : "Escuchando";
@@ -79,10 +79,10 @@ export function HeroComposer() {
   const agentCopy = status === "loading"
     ? loadingLine
     : ready
-      ? "Primero la opción que te sirve. Después, extras si los quieres."
+      ? "Elige una Chizpa. El click te lleva a pagar."
       : awake
-        ? "Listo. Te muestro opciones y precio."
-        : "Cuéntamelo como te salga. Te propongo una solución concreta.";
+        ? "Perfecto. Ya puedo armarte SMARTactics."
+        : "Cuéntamelo como te salga. Yo lo convierto en Chizpas para pagar.";
 
   return (
     <form
@@ -105,8 +105,8 @@ export function HeroComposer() {
       </div>
 
       <label className="hero-composer__prompt" htmlFor="project-idea">
-        <strong>¿Qué necesitas dejar listo?</strong>
-        <span>Te muestro una opción principal y complementos, con precio.</span>
+        <strong>¿Qué proyecto quieres dejar listo?</strong>
+        <span>SMARTactics con Chizpas concretas. Nada de consejos sueltos.</span>
       </label>
 
       <div className="hero-composer__input-shell">
@@ -130,7 +130,7 @@ export function HeroComposer() {
         <div className="hero-composer__toolbar">
           <span><Sparkles size={14} /> Te orientamos paso a paso</span>
           <button type="submit" disabled={status === "loading" || !awake}>
-            {status === "loading" ? <><LoaderCircle size={18} className="spin" /> Buscando</> : ready ? <>Recalcular <ArrowRight size={19} /></> : <>Ver opciones y precio <ArrowRight size={19} /></>}
+            {status === "loading" ? <><LoaderCircle size={18} className="spin" /> Armando</> : ready ? <>Recalcular <ArrowRight size={19} /></> : <>Dame SMARTactics <ArrowRight size={19} /></>}
           </button>
         </div>
       </div>
@@ -174,7 +174,7 @@ export function HeroComposer() {
       {ready && plan && (
         <div className="smartactics" ref={resultsRef} aria-live="polite">
           <div className="smartactics__intro">
-            <p className="smartactics__kicker"><Target size={15} /> Tu mejor opción ahora</p>
+            <p className="smartactics__kicker"><Target size={15} /> SMARTactics</p>
             <h2>{plan.headline}</h2>
             <p>{plan.read}</p>
           </div>
@@ -183,7 +183,7 @@ export function HeroComposer() {
               <SmartacticCard key={tactic.serviceId} tactic={tactic} index={index} />
             ))}
           </ol>
-          <p className="smartactics__note">La primera es la que resolvería esto ahora. Las otras suman, si te sirven.</p>
+          <p className="smartactics__note">Cada acción es una Chizpa de nuestro catálogo. El click abre el brief y el pago.</p>
         </div>
       )}
     </form>
@@ -191,32 +191,42 @@ export function HeroComposer() {
 }
 
 function SmartacticCard({ tactic, index }: { tactic: HydratedTactic; index: number }) {
-  const primary = index === 0;
+  const chips = [
+    { letter: "S", label: "Específico", value: tactic.title },
+    { letter: "M", label: "Medible", value: tactic.result },
+    { letter: "A", label: "Alcanzable", value: `${tactic.fromPrice ? "Desde " : ""}US$${tactic.price}${tactic.recurrence ? "/mes" : ""}` },
+    { letter: "R", label: "Relevante", value: tactic.why },
+    { letter: "T", label: "En tiempo", value: tactic.recurrence ? tactic.recurrence : `Hasta ${tactic.hours} h` },
+  ];
+
   return (
-    <li className={`smartactic${primary ? " smartactic--primary" : ""}`}>
+    <li className={`smartactic${index === 0 ? " smartactic--primary" : ""}`}>
       <div className="smartactic__top">
-        <b aria-hidden="true">{primary ? "1" : "+"}</b>
+        <b aria-hidden="true">{index + 1}</b>
         <div>
-          <p className="smartactic__category">{primary ? "Recomendado para esto" : "Complemento opcional"} · {tactic.category}</p>
-          <h3>{tactic.serviceTitle}</h3>
+          <p className="smartactic__category">{tactic.category}{tactic.recurrence ? ` · ${tactic.recurrence}` : ""}</p>
+          <h3>{tactic.title}</h3>
           <p className="smartactic__why">{tactic.why}</p>
         </div>
       </div>
-      <ul className="smartactic__facts">
-        <li><span>Qué recibes</span><strong>{tactic.result}</strong></li>
-        <li><span>Plazo</span><strong>{tactic.recurrence ? tactic.recurrence : `Hasta ${tactic.hours} h`}</strong></li>
-        <li><span>Precio</span><strong>{tactic.fromPrice ? "Desde " : ""}US${tactic.price}{tactic.recurrence ? "/mes" : ""}</strong></li>
+      <ul className="smartactic__smart" aria-label="SMART">
+        {chips.map((chip) => (
+          <li key={chip.letter} title={`${chip.label}: ${chip.value}`}>
+            <strong>{chip.letter}</strong>
+            <span>{chip.value}</span>
+          </li>
+        ))}
       </ul>
       <div className="smartactic__service">
         <div>
-          <small>{primary ? "Parte por aquí" : "Suma si lo necesitas"}</small>
+          <small>{tactic.serviceTitle}</small>
           <strong>{tactic.fromPrice ? "Desde " : ""}US${tactic.price}{tactic.recurrence ? <em>/mes</em> : ""}</strong>
+          <span>{tactic.recurrence ? <><Repeat2 size={13} /> {tactic.recurrence}</> : <><Clock3 size={13} /> hasta {tactic.hours} h</>}</span>
         </div>
         <Link href={tactic.href} aria-label={`Empezar ${tactic.serviceTitle}`}>
-          {primary ? "Ver alcance y precio" : "Agregar este"} <ArrowRight size={17} />
+          {index === 0 ? "Empezar y pagar" : "Elegir esta"} <ArrowRight size={17} />
         </Link>
       </div>
     </li>
   );
 }
-
