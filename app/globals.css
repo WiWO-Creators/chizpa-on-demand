@@ -4258,18 +4258,115 @@ html.chizpa-ready body { overflow: auto; }
 
 .chizpa-home .hero {
   min-height: 0;
-  padding: 28px clamp(20px, 5vw, 72px) 18px;
-  gap: 18px;
+  padding: 36px clamp(18px, 5vw, 72px) 28px;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+  text-align: center;
 }
-.chizpa-home .hero__content { padding: 0; width: 100%; }
-.chizpa-home .hero__lead { margin: 10px 0 0; max-width: 560px; font-size: 16px; line-height: 1.45; }
-.chizpa-home .hero-composer { margin-top: 16px; }
-.chizpa-home .hero-composer textarea { min-height: 84px; }
-.chizpa-home .hero-purchase-path { margin-top: 10px; }
+.chizpa-home .hero__content {
+  width: min(880px, 100%);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.chizpa-home .hero h1 {
+  max-width: none;
+  margin: 0 auto;
+  text-align: center;
+}
+.chizpa-home .hero h1 span { display: inline; }
+.chizpa-home .hero__lead {
+  max-width: 34rem;
+  margin: 12px auto 0;
+  font-size: 16px;
+  line-height: 1.45;
+  text-align: center;
+}
+.chizpa-home .hero-composer {
+  width: min(760px, 100%);
+  margin: 8px auto 0;
+}
+.chizpa-home .hero-composer textarea,
+.chizpa-home .hero-composer__input-shell {
+  min-height: 132px;
+}
+.chizpa-home .hero-composer textarea { padding-bottom: 72px; }
+.chizpa-home .hero-purchase-path {
+  width: min(760px, 100%);
+  margin: 4px auto 0;
+  display: flex;
+  justify-content: center;
+}
 .chizpa-home .hero-purchase-path ol { display: none; }
+
+@media (max-width: 780px) {
+  .chizpa-home .hero {
+    padding: 22px 16px 18px;
+    gap: 14px;
+  }
+  .chizpa-home .hero h1 {
+    font-size: clamp(40px, 11vw, 56px);
+    line-height: .95;
+    letter-spacing: -.06em;
+  }
+  .chizpa-home .hero__lead {
+    max-width: 22rem;
+    font-size: 14px;
+  }
+  .chizpa-home .hero-composer {
+    width: 100%;
+    border-radius: 24px;
+  }
+  .chizpa-home .hero-composer textarea,
+  .chizpa-home .hero-composer__input-shell {
+    min-height: 148px;
+  }
+  .chizpa-home .hero-composer__toolbar {
+    position: static;
+    margin: 0 8px 8px;
+    flex-wrap: wrap;
+  }
+  .chizpa-home .hero-composer__toolbar button {
+    width: 100%;
+    justify-content: center;
+  }
+  .chizpa-home .hero-composer > .hero-examples {
+    margin-left: 12px;
+    margin-right: 0;
+    padding-right: 12px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+  }
+  .quick-types {
+    padding: 8px 14px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+  }
+  .mode-deck, .recurring-showcase, .catalog, .how {
+    padding-inline: 16px;
+  }
+  .service-grid, .recurring-showcase__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .chizpa-home .hero h1 { font-size: 36px; }
+  .chizpa-home .hero-composer__agent-copy small { display: none; }
+  .chizpa-home .hero-composer > .hero-composer__header .hero-composer__status {
+    font-size: 0;
+    padding: 8px;
+    gap: 0;
+  }
+}
+
 .quick-types { padding: 10px clamp(20px, 5vw, 72px) 6px; }
 .mode-deck { padding: 48px clamp(20px, 5vw, 72px) 56px; }
 .mode-deck__heading { margin-bottom: 22px; }
